@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - MD Consulting{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Créer un compte</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST" action="{{ url_for('signup') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <input type="text" name="nom" class="contact-input form-control mb-3" placeholder="Nom" required>
+        <input type="email" name="email" class="contact-input form-control mb-3" placeholder="Email" required>
+        <input type="password" name="motdepasse" class="contact-input form-control mb-3" placeholder="Mot de passe" required>
+        <input type="text" name="adresse" class="contact-input form-control mb-3" placeholder="Adresse" required>
+        
+        <button type="submit" class="btn btn-primary contact-button w-100">S'inscrire</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div style="text-align: center;">
+  <img src="{{ url_for('static', filename='images/Affiche.jpg') }}" height="300" width="300" alt="Affiche promotionnelle du savon noir naturel">
+  <br><br>
+</div>
+
+<style>
+  body.page {
+   background-color: #8dd0d0;
+}
+</style>
+
+</div>
+{% endblock %}

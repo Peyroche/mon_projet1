@@ -1,0 +1,17 @@
+# Empêche le versionnement du fichier contenant les secrets
+.env
+
+# Fichiers Python compilés
+__pycache__/
+*.pyc
+
+# Dossiers d’environnement virtuel
+venv/
+env/
+
+# Fichiers de log
+*.log
+
+# Dossiers spécifiques aux éditeurs
+.vscode/
+.idea/

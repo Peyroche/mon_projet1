@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Panier - Ma Boutique{% endblock %}
+
+{% block content %}
+<main>
+
+  <section>
+    <h2>🛒 Votre Panier</h2>
+    <ul id="cart"></ul>
+    <p id="totalPrice"></p>
+
+    <form id="commandeForm">
+      <label>Nom : <input type="text" name="nom" required></label><br>
+      <label>Prénom : <input type="text" name="prenom" required></label><br>
+      <label>Adresse : <input type="text" name="adresse" required></label><br>
+      <label>Téléphone : <input type="tel" name="telephone" required></label><br>
+      <label>Email : <input type="email" name="email" required></label><br>
+      <button type="submit">Valider la commande</button>
+    </form>
+
+    <p id="confirmationMessage" style="display: none; font-weight: bold; color: green; margin-top: 10px;">
+      ✅ Votre commande a été validée avec succès !
+    </p>
+  </section>
+
+  <style>
+     body.page {
+       background-color: #8dd0d0;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input {
+      padding: 5px;
+      width: 300px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-weight: bold;
+    }
+
+  </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const liste = document.getElementById("cart");
+    const totalEl = document.getElementById("totalPrice");
+    const form = document.getElementById("commandeForm");
+
+    function afficherPanier() {
+      liste.innerHTML = "";
+      let total = 0;
+
+      panier.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${item.produit} - ${item.prix}€ `;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑️ Supprimer";
+        deleteBtn.style.marginLeft = "10px";
+        deleteBtn.addEventListener("click", () => {
+          panier.splice(index, 1);
+          localStorage.setItem("panier", JSON.stringify(panier));
+          afficherPanier(); // Met à jour l'affichage sans recharger
+        });
+
+        li.appendChild(deleteBtn);
+        liste.appendChild(li);
+        total += item.prix;
+      });
+
+      totalEl.textContent = `Total : ${total.toFixed(2)}€`;
+    }
+
+    afficherPanier(); // Initialisation
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        alert("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      const formData = new FormData(form);
+      const total = panier.reduce((acc, item) => acc + item.prix, 0);
+
+      const clientData = {
+        nom: formData.get("nom"),
+        prenom: formData.get("prenom"),
+        adresse: formData.get("adresse"),
+        telephone: formData.get("telephone"),
+        email: formData.get("email"),
+        panier: panier,
+        total: total.toFixed(2)
+      };
+
+      fetch("/valider_commande", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(clientData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.removeItem("panier");
+          panier = [];
+          afficherPanier();
+          document.getElementById("confirmationMessage").style.display = "block";
+        } else {
+          alert("Erreur lors de la validation.");
+        }
+      });
+    });
+  });
+</script>
+
+</main>
+{% endblock %}

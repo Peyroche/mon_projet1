@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Ma Boutique{% endblock %}
+
+{% block content %}
+
+<main>
+
+<section>
+
+<h2>Contactez-nous</h2>
+
+<form action="{{ url_for('contact') }}" method="post" class="contact-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="nom" placeholder="Nom" class="contact-input" required>
+    <input type="text" name="prenom" placeholder="Prénom" class="contact-input" required>
+    <input type="email" name="email" placeholder="Email" class="contact-input" required>
+    <textarea name="message" cols="80" rows="9" placeholder="Saisi le message" class="contact-input" required></textarea>
+    <input type="submit" value="Envoyer" class="contact-button">
+  </form><br/>
+
+<div class="social" style="margin-top: 20px;">
+    <a href="https://www.facebook.com/profile.php?id=100076569482182" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-facebook'></i></a>
+    <a href="https://wa.me/33600000000" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-whatsapp'></i></a>
+    <a href="https://www.instagram.com/mercierfouna/" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-instagram'></i></a>
+  </div>
+</div>
+
+</section>
+
+<style>
+    .contact-form { max-width: 500px; margin: auto; }
+    .contact-input, .contact-button { display: block; width: 100%; margin-bottom: 10px; padding: 10px; }
+    .flash-message { background-color: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 5px; }
+    .contact-button { background-color: blue; color : white}
+
+body.page {
+   background-color: #8dd0d0;
+}
+
+.social {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social a {
+  display: inline-block;
+  font-size: 28px;
+  color: white;
+  background-color: blue;
+  padding: 12px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  text-decoration: none;
+}
+
+</style>
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Produits - Ma Boutique{% endblock %}
+
+{% block content %}
+<main>
+
+  <section>
+
+    <h2>Nos Produits</h2>
+    <ul>
+      {% for produit in produits %}
+        <li>
+          <div class="product">
+            <h3>{{ produit.nom }}</h3>
+            <img src="{{ url_for('static', filename='images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="product-image">
+            <p>Prix : {{ produit.prix }}€</p>
+            <p>Stock : {{ produit.stock }}</p>
+            <button class="add-to-cart" data-nom="{{ produit.nom }}" data-price="{{ produit.prix }}">Ajouter au panier</button>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+  </section>
+
+<style>
+body.page {
+  background-image: url("{{ url_for('static', filename='images/Savon_noir.jpg') }}");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+</style>
+
+  <script>
+    let panier = JSON.parse(localStorage.getItem("panier")) || [];
+
+    function ajouterAuPanier(nom, prix) {
+      panier.push({ produit: nom, prix: prix });
+      localStorage.setItem("panier", JSON.stringify(panier));
+      alert(nom + " ajouté au panier !");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const boutons = document.querySelectorAll(".add-to-cart");
+      boutons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const nom = btn.getAttribute("data-nom");
+          const prix = parseFloat(btn.getAttribute("data-price"));
+          ajouterAuPanier(nom, prix);
+        });
+      });
+    });
+
+  </script>
+
+</main>
+{% endblock %}
