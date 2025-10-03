@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash
+from config import Config
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask import session
@@ -13,39 +14,16 @@ from dotenv import load_dotenv
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 import os
 
-load_dotenv()  # Charge les variables depuis .env
-print(os.environ.get("FLASK_SECRET_KEY"))
-if not os.environ.get("FLASK_SECRET_KEY"):
-    raise RuntimeError("FLASK_SECRET_KEY est introuvable. Vérifie ton fichier .env.")
-
 # Clés secrètes
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY")
-app.config["WTF_CSRF_SECRET_KEY"] = os.environ.get("CSRF_SECRET_KEY")
+app.config.from_object(Config)
 
-print("FLASK_SECRET_KEY:", app.secret_key)
-print("CSRF_SECRET_KEY:", app.config["WTF_CSRF_SECRET_KEY"])
+csrf = CSRFProtect(app)
+db = SQLAlchemy(app)
+mail = Mail(app)
 
 # Sécurité des cookies de session
 app.config["SESSION_COOKIE_HTTPONLY"] = True  # Pour éviter les vols de session
-
-csrf = CSRFProtect(app)
-
-# 🔧 Configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mysql+pymysql://{os.environ.get('DB_USER')}:{os.environ.get('DB_PASSWORD')}"
-    f"@{os.environ.get('DB_HOST')}/{os.environ.get('DB_NAME')}"
-)
-db = SQLAlchemy(app)
-
-app.config.update(
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USERNAME=os.environ.get("MAIL_USERNAME"),
-    MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD")
-)
-mail = Mail(app)
 
 # 🛍️ Modèle commande
 class Order(db.Model):
@@ -137,7 +115,7 @@ Merci pour votre commande !
 Nous vous contacterons au {telephone} si nécessaire.
 
 Cordialement,
-Ma Boutique
+MD Consulting
 """
         mail.send(msg)
     except Exception as e:
@@ -211,7 +189,7 @@ Nous avons bien reçu votre message :
 Nous vous répondrons dans les plus brefs délais.
 
 Cordialement,
-L’équipe Ma Boutique
+L’équipe MD Consulting
 """
             mail.send(msg)
         except Exception as e:
@@ -264,7 +242,3 @@ def signup():
 def logout():
     session.clear()  # ou session.pop("user_id", None)
     return redirect(url_for("login"))
-
-if __name__ == '__main__':
-    app.run(debug=True)
-

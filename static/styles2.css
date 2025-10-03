@@ -50,18 +50,10 @@ main {
 button {
     padding: 10px;
     border: none;
-    background-color: blue;
+    background-color: #28a745;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
-}
-
-button:hover {
-    background-color: #218838;
-}
-
-button:active {
-    animation: pop 0.3s;
 }
 
 
