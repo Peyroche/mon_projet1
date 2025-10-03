@@ -18,6 +18,7 @@ Deprecated==1.2.18
 docutils==0.21.2
 ecdsa==0.19.1
 filetype==1.2.0
+# Version nettoyée le 3 octobre
 Flask==3.1.1
 Flask-Bcrypt==1.0.1
 Flask-JWT-Extended==4.7.1
