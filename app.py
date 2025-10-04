@@ -6,6 +6,7 @@ from flask import session
 from flask_wtf import CSRFProtect
 from flask_mail import Mail
 from flask_mail import Message
+from sqlalchemy import text
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
@@ -25,9 +26,6 @@ db = SQLAlchemy(app, engine_options={
         "ssl": {}
     }
 })
-
-from sqlalchemy import text
-db.session.execute(text("SELECT 1"))
 
 mail = Mail(app)
 
