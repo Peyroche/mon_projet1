@@ -18,6 +18,8 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
+print("DB_HOST:", app.config["SQLALCHEMY_DATABASE_URI"])
+
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -242,3 +244,25 @@ def signup():
 def logout():
     session.clear()  # ou session.pop("user_id", None)
     return redirect(url_for("login"))
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Render définit PORT automatiquement
+    app.run(host="0.0.0.0", port=port)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
