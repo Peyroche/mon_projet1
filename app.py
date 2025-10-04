@@ -27,6 +27,13 @@ db = SQLAlchemy(app, engine_options={
 })
 mail = Mail(app)
 
+with app.app_context():
+    try:
+        db.session.execute("SELECT 1")
+        print("✅ Connexion MySQL réussie")
+    except Exception as e:
+        print("❌ Erreur MySQL :", e)
+
 # Sécurité des cookies de session
 app.config["SESSION_COOKIE_HTTPONLY"] = True  # Pour éviter les vols de session
 
