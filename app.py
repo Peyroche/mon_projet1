@@ -7,7 +7,6 @@ from flask_wtf import CSRFProtect
 from flask_mail import Mail
 from flask_mail import Message
 import requests
-import mysql.connector
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from dotenv import load_dotenv
@@ -26,7 +25,6 @@ db = SQLAlchemy(app, engine_options={
         "ssl": {}
     }
 })
-
 mail = Mail(app)
 
 # Sécurité des cookies de session
@@ -249,25 +247,3 @@ def signup():
 def logout():
     session.clear()  # ou session.pop("user_id", None)
     return redirect(url_for("login"))
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render définit PORT automatiquement
-    app.run(host="0.0.0.0", port=port)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
