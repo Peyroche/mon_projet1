@@ -25,6 +25,10 @@ db = SQLAlchemy(app, engine_options={
         "ssl": {}
     }
 })
+
+from sqlalchemy import text
+db.session.execute(text("SELECT 1"))
+
 mail = Mail(app)
 
 with app.app_context():
