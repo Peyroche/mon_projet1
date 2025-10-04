@@ -21,7 +21,12 @@ app.config.from_object(Config)
 print("DB_HOST:", app.config["SQLALCHEMY_DATABASE_URI"])
 
 csrf = CSRFProtect(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options={
+    "connect_args": {
+        "ssl": {}
+    }
+})
+
 mail = Mail(app)
 
 # Sécurité des cookies de session

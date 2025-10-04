@@ -7,7 +7,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = (
     f"mysql+pymysql://{os.environ.get('DB_USER')}:{os.environ.get('DB_PASSWORD')}"
-    f"@{os.environ.get('DB_HOST')}/{os.environ.get('DB_NAME')}?ssl=true"
+    f"@{os.environ.get('DB_HOST')}/{os.environ.get('DB_NAME')}"
 )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
