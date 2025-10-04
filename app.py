@@ -17,7 +17,7 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
-print("DB_HOST:", app.config["SQLALCHEMY_DATABASE_URI"])
+print("DB URI:", app.config["SQLALCHEMY_DATABASE_URI"])
 
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options={
