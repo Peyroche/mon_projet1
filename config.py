@@ -1,25 +1,29 @@
 import os
 from urllib.parse import quote_plus
+from dotenv import load_dotenv
 
-# 🔐 Encodage sécurisé du mot de passe AVANT la classe
+# 📥 Chargement des variables d’environnement depuis .env (utile en local)
+load_dotenv()
+
+# 🔐 Encodage sécurisé du mot de passe MySQL
 raw_password = os.environ.get("DB_PASSWORD", "")
 encoded_password = quote_plus(raw_password)
 
-# 🧪 Vérification dans les logs
-print("Mot de passe brut :", raw_password)
+# 🧪 Log optionnel pour vérifier le mot de passe encodé
+print("Mot de passe brut :", repr(raw_password))
 print("Mot de passe encodé :", encoded_password)
 
-# ⚠️ Déclenche une erreur si le mot de passe est absent
+# ⚠️ Sécurité : déclenche une erreur si le mot de passe est absent
 if not raw_password:
-    raise ValueError("⚠️ DB_PASSWORD est manquant ou vide")
+    raise ValueError("⚠️ DB_PASSWORD est bien défini dans Render mais vide ou inaccessible")
 
 class Config:
     # 🔒 Sécurité des cookies
     SESSION_COOKIE_HTTPONLY = True
 
     # 🔐 Clés secrètes Flask et CSRF
-    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
-    WTF_CSRF_SECRET_KEY = os.environ.get("CSRF_SECRET_KEY")
+    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY", "dev_key")
+    WTF_CSRF_SECRET_KEY = os.environ.get("CSRF_SECRET_KEY", "csrf_dev_key")
 
     # 🛠️ Configuration SQLAlchemy avec mot de passe encodé
     SQLALCHEMY_DATABASE_URI = (

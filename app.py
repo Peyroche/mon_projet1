@@ -1,45 +1,35 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash, session
 from config import Config
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
-from flask import session
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import CSRFProtect
-from flask_mail import Mail
-from flask_mail import Message
-from sqlalchemy import text
-import requests
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
-from dotenv import load_dotenv
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
+from sqlalchemy import text
 import os
 
-# Clés secrètes
+# 🔧 Initialisation de l'application
 app = Flask(__name__)
 app.config.from_object(Config)
 
-print("DB URI:", app.config["SQLALCHEMY_DATABASE_URI"])
-
+# 🔒 Sécurité & extensions
 csrf = CSRFProtect(app)
-db = SQLAlchemy(app, engine_options={
-    "connect_args": {
-        "ssl": {}
-    }
-})
-
+db = SQLAlchemy(app)
 mail = Mail(app)
 
-with app.app_context():
-    try:
-        db.session.execute("SELECT 1")
-        print("✅ Connexion MySQL réussie")
-    except Exception as e:
-        print("❌ Erreur MySQL :", e)
+# ✅ Test de connexion à la base
+try:
+    with app.app_context():
+        db.session.execute(text("SELECT 1"))
+    print("✅ Connexion à la base MySQL réussie")
+except Exception as e:
+    print("❌ Erreur de connexion à la base :", e)
 
-# Sécurité des cookies de session
-app.config["SESSION_COOKIE_HTTPONLY"] = True  # Pour éviter les vols de session
+# 🔐 Sécurité des cookies
+app.config["SESSION_COOKIE_HTTPONLY"] = True
 
-# 🛍️ Modèle commande
+# 🧱 Modèles SQLAlchemy
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -53,7 +43,7 @@ class Product(db.Model):
     nom = db.Column(db.String(100), nullable=False)
     prix = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
-    image = db.Column(db.String(255))  # nom du fichier image
+    image = db.Column(db.String(255))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,18 +65,16 @@ with app.app_context():
 
 # 📦 Route API commandes
 @app.route("/valider_commande", methods=["POST"])
+@csrf.exempt
 def valider_commande():
     if not request.is_json:
         return jsonify({"success": False, "error": "Requête non JSON"}), 400
 
     data = request.get_json()
-
-    # 🔍 Validation des données
     errors = validate_commande_data(data)
     if errors:
         return jsonify({"success": False, "errors": errors}), 400
 
-    # ✅ Extraction des données après validation
     nom = data.get("nom")
     prenom = data.get("prenom")
     adresse = data.get("adresse")
@@ -111,7 +99,6 @@ def valider_commande():
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
-    # 📧 Envoi de l'email
     try:
         msg = Message(
             subject="Confirmation de votre commande",
@@ -137,9 +124,6 @@ MD Consulting
 
     return jsonify({"success": True})
 
-# ⛔️ Exemption CSRF ici, après la fonction
-csrf.exempt(valider_commande)
-
 # 🌍 Fichiers statiques
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -154,7 +138,6 @@ def accueil():
 def afficher_produits():
     if not session.get("user_id"):
         return redirect(url_for("signup"))
-
     produits = Product.query.all()
     return render_template("produits.html", produits=produits)
 
@@ -162,7 +145,6 @@ def afficher_produits():
 def panier():
     if not session.get("user_id"):
         return redirect(url_for("signup"))
-
     user_id = session.get('user_id')
     return render_template("panier.html", user_id=user_id)
 
@@ -177,7 +159,6 @@ def contact():
         email = request.form["email"]
         message = request.form["message"]
 
-        # Enregistrement dans la base de données
         nouveau_message = MessageContact(
             nom=nom,
             prenom=prenom,
@@ -187,7 +168,6 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
-        # Envoi de l'email de confirmation
         try:
             msg = Message(
                 subject="Message reçu - Ma Boutique",
@@ -219,7 +199,6 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         motdepasse = request.form["motdepasse"]
-
         utilisateur = User.query.filter_by(email=email).first()
 
         if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
@@ -254,12 +233,10 @@ def signup():
 
 @app.route("/logout")
 def logout():
-    session.clear()  # ou session.pop("user_id", None)
+    session.clear()
     return redirect(url_for("login"))
 
+# 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
-
