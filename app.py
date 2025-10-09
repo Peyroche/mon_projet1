@@ -15,7 +15,7 @@ app.config.from_object(Config)
 
 # 🔒 Sécurité & extensions
 csrf = CSRFProtect(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 mail = Mail(app)
 
 # ✅ Test de connexion à la base

@@ -34,6 +34,13 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # ⚙️ Options avancées SQLAlchemy
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
+        "connect_args": {"connect_timeout": 10}
+    }
+
     # 📧 Configuration de l'envoi d’e-mails
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
@@ -41,12 +48,7 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
-print("🔗 URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
-
+# 🔍 Test local (non exécuté sur Render)
 if __name__ == "__main__":
-    print("🔍 Test config :")
-    print("URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
-    print("Email :", Config.MAIL_USERNAME)
-
-
-
+    print("🔗 URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
+    print("📧 Email :", Config.MAIL_USERNAME)
