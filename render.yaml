@@ -3,7 +3,7 @@ services:
     name: mon_projet1
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    startCommand: "gunicorn app:app --workers 1 --timeout 60"
     envVars:
       - key: FLASK_SECRET_KEY
         value: 1f33444e66c8a5e2f9c55b33c84b749c89d84c648ce0fec010e8f5e675a85b26
@@ -21,4 +21,3 @@ services:
         value: mysql-mdconsulting.alwaysdata.net
       - key: DB_NAME
         value: mdconsulting_admin
-

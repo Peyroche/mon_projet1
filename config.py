@@ -1,6 +1,8 @@
 import os
+import threading
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
+
 
 # 📥 Chargement des variables d’environnement depuis .env (utile en local)
 load_dotenv()
@@ -47,6 +49,34 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+
+
+def envoyer_confirmation(email, prenom, items, total, adresse, telephone):
+    try:
+        msg = Message(
+            subject="Confirmation de votre commande",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[email]
+        )
+        msg.body = f"""Bonjour {prenom},
+
+Merci pour votre commande !
+
+📦 Produits : {items}
+💰 Total : {total:.2f}€
+📍 Adresse : {adresse}
+
+Nous vous contacterons au {telephone} si nécessaire.
+
+Cordialement,
+MD Consulting
+"""
+        mail.send(msg)
+    except Exception as e:
+        print("Erreur d'envoi de mail :", e)
+
+# Dans valider_commande()
+threading.Thread(args=(email, prenom, items, total, adresse, telephone)).start()
 
 # 🔍 Test local (non exécuté sur Render)
 if __name__ == "__main__":
