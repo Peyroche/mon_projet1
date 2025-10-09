@@ -41,4 +41,4 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
-print("🔗 URI SQLAlchemy :", SQLALCHEMY_DATABASE_URI)
+print("🔗 URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
