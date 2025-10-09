@@ -109,6 +109,10 @@ def valider_commande():
             target=envoyer_confirmation,
             args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
+    except Exception as e:
+        print("Erreur d'envoi de mail (thread) :", e)
+
+    return jsonify({"success": True})
 
     try:
         msg = Message(
@@ -131,7 +135,7 @@ MD Consulting
 """
         mail.send(msg)
     except Exception as e:
-        print("Erreur d'envoi de mail :", e)
+        print("Erreur d'envoi de mail (direct) :", e)
 
     return jsonify({"success": True})
 
