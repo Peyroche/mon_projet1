@@ -2,8 +2,8 @@ from flask_mail import Message
 from threading import Thread
 
 def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
-    def send_async_email():
-        try:
+    def send_async():
+        with app.app_context():
             msg = Message(
                 subject="Confirmation de votre commande",
                 sender=app.config["MAIL_USERNAME"],
@@ -23,7 +23,5 @@ Cordialement,
 MD Consulting
 """
             mail.send(msg)
-        except Exception as e:
-            print("Erreur d'envoi de mail :", e)
 
-    Thread(target=send_async_email).start()
+    Thread(target=send_async).start()

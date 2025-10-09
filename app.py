@@ -7,8 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
-from utils import envoyer_confirmation
 import psutil
+from config import envoyer_confirmation
+import threading
 import os
 
 print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
