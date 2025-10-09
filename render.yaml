@@ -2,5 +2,23 @@ services:
   - type: web
     name: mon_projet1
     env: python
-    buildCommand: ""
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
+    envVars:
+      - key: FLASK_SECRET_KEY
+        value: 1f33444e66c8a5e2f9c55b33c84b749c89d84c648ce0fec010e8f5e675a85b26
+      - key: CSRF_SECRET_KEY
+        value: 8c1b4e5ba60c76e5df5482a8ef1a5a2691316a1e73399b850c18c5a60ee7c902
+      - key: MAIL_USERNAME
+        value: fplacide66@gmail.com
+      - key: MAIL_PASSWORD
+        value: shim dosy ikvz vlhj
+      - key: DB_USER
+        value: 433809
+      - key: DB_PASSWORD
+        value: +2422301Mn
+      - key: DB_HOST
+        value: mysql-mdconsulting.alwaysdata.net
+      - key: DB_NAME
+        value: mdconsulting_admin
+

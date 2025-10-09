@@ -5,17 +5,19 @@ from dotenv import load_dotenv
 # 📥 Chargement des variables d’environnement depuis .env (utile en local)
 load_dotenv()
 
+# ✅ Vérification des variables obligatoires
+required_vars = ["DB_USER", "DB_PASSWORD", "DB_HOST", "DB_NAME"]
+for var in required_vars:
+    if not os.environ.get(var):
+        raise RuntimeError(f"❌ Variable d'environnement manquante : {var}")
+
 # 🔐 Encodage sécurisé du mot de passe MySQL
-raw_password = os.environ.get("DB_PASSWORD", "")
+raw_password = os.environ["DB_PASSWORD"]
 encoded_password = quote_plus(raw_password)
 
 # 🧪 Log optionnel pour vérifier le mot de passe encodé
 print("Mot de passe brut :", repr(raw_password))
 print("Mot de passe encodé :", encoded_password)
-
-# ⚠️ Sécurité : déclenche une erreur si le mot de passe est absent
-if not raw_password:
-    raise ValueError("⚠️ DB_PASSWORD est bien défini dans Render mais vide ou inaccessible")
 
 class Config:
     # 🔒 Sécurité des cookies
@@ -27,12 +29,12 @@ class Config:
 
     # 🛠️ Configuration SQLAlchemy avec mot de passe encodé
     SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{os.environ.get('DB_USER')}:{encoded_password}"
-        f"@{os.environ.get('DB_HOST')}/{os.environ.get('DB_NAME')}"
+        f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
+        f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # 📧 Configuration de l'envoi d'e-mails
+    # 📧 Configuration de l'envoi d’e-mails
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
