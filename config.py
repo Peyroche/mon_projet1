@@ -42,3 +42,11 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
 print("🔗 URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
+
+if __name__ == "__main__":
+    print("🔍 Test config :")
+    print("URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
+    print("Email :", Config.MAIL_USERNAME)
+
+
+
