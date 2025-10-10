@@ -9,6 +9,7 @@ from validator import validate_signup_data, validate_commande_data, validate_con
 from sqlalchemy import text
 import psutil
 from config import envoyer_confirmation
+from utils.mail import envoyer_confirmation
 import threading
 import os
 
