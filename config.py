@@ -2,7 +2,7 @@ import os
 import threading
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
-from utils import envoyer_confirmation
+from utils.mail import envoyer_confirmation
 from threading import Thread
 
 # 📥 Chargement des variables d’environnement depuis .env (utile en local)
