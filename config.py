@@ -1,9 +1,6 @@
 import os
-import threading
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
-from utils.mail import envoyer_confirmation
-from threading import Thread
 
 # 📥 Chargement des variables d’environnement depuis .env (utile en local)
 load_dotenv()
@@ -27,10 +24,16 @@ class Config:
     WTF_CSRF_SECRET_KEY = os.environ.get("CSRF_SECRET_KEY", "csrf_dev_key")
     SESSION_COOKIE_HTTPONLY = True
 
-    SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
-        f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
-    )
+    if os.environ.get("FLASK_ENV") == "production":
+        raw_password = os.environ.get("DB_PASSWORD", "")
+        encoded_password = quote_plus(raw_password)
+        SQLALCHEMY_DATABASE_URI = (
+            f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
+            f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
+        )
+    else:
+        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:password@localhost:3306/ma_base_locale"
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
@@ -67,12 +70,6 @@ MD Consulting
         mail.send(msg)
     except Exception as e:
         print("Erreur d'envoi de mail :", e)
-
-# Dans valider_commande()
-try:
-    Thread(...).start()
-except Exception as e:
-    print(...)
 
 # 🔍 Test local (non exécuté sur Render)
 if __name__ == "__main__":
