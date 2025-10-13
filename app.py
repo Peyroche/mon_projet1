@@ -107,10 +107,10 @@ def valider_commande():
     try:
         threading.Thread(
             target=envoyer_confirmation,
-            args=(app, mail, email, prenom, items, total, adresse, telephone)
+            args=(app, mail, email, prenom, message)
         ).start()
     except Exception as e:
-        print("Erreur d'envoi de mail (thread) :", e)
+        print("Erreur d'envoi de mail (thread contact) :", e)
 
     return jsonify({"success": True})
 

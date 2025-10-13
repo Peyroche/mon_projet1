@@ -1,26 +1,27 @@
 from flask_mail import Message
 
-def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
+def envoyer_confirmation_contact(app, mail, email, prenom, message):
     try:
         with app.app_context():
             msg = Message(
-                subject="Confirmation de votre commande",
+                subject="Message reçu - Ma Boutique",
                 sender=app.config["MAIL_USERNAME"],
                 recipients=[email]
             )
             msg.body = f"""Bonjour {prenom},
 
-Merci pour votre commande !
+Nous avons bien reçu votre message :
 
-📦 Produits : {items}
-💰 Total : {total:.2f}€
-📍 Adresse : {adresse}
+"{message}"
 
-Nous vous contacterons au {telephone} si nécessaire.
+Nous vous répondrons dans les plus brefs délais.
 
 Cordialement,
-MD Consulting
+L’équipe MD Consulting
 """
             mail.send(msg)
     except Exception as e:
-        print("Erreur d'envoi de mail :", e)
+        print("Erreur SMTP contact :", e)
+
+
+
