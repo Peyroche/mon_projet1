@@ -139,6 +139,7 @@ def panier():
     return render_template("panier.html", user_id=user_id)
 
 @app.route("/contact", methods=["GET", "POST"])
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
     if not session.get("user_id"):
         return redirect(url_for("signup"))

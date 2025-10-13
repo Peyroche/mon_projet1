@@ -22,6 +22,3 @@ L’équipe MD Consulting
             mail.send(msg)
     except Exception as e:
         print("Erreur SMTP contact :", e)
-
-
-
