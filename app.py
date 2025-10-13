@@ -158,26 +158,14 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
+        # ✅ Envoi du mail dans un thread
         try:
-            msg = Message(
-                subject="Message reçu - Ma Boutique",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-            msg.body = f"""Bonjour {prenom},
-
-Nous avons bien reçu votre message :
-
-"{message}"
-
-Nous vous répondrons dans les plus brefs délais.
-
-Cordialement,
-L’équipe MD Consulting
-"""
-            mail.send(msg)
+            threading.Thread(
+                target=envoyer_confirmation_contact,
+                args=(app, mail, email, prenom, message)
+            ).start()
         except Exception as e:
-            print("Erreur d'envoi de mail :", e)
+            print("Erreur d'envoi de mail (contact) :", e)
 
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
