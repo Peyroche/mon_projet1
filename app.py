@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
 import psutil
-from config import envoyer_confirmation
 from utils.mail import envoyer_confirmation
 import threading
 import os
@@ -112,31 +111,6 @@ def valider_commande():
         ).start()
     except Exception as e:
         print("Erreur d'envoi de mail (thread) :", e)
-
-    return jsonify({"success": True})
-
-    try:
-        msg = Message(
-            subject="Confirmation de votre commande",
-            sender=app.config["MAIL_USERNAME"],
-            recipients=[email]
-        )
-        msg.body = f"""Bonjour {prenom},
-
-Merci pour votre commande !
-
-📦 Produits : {items}
-💰 Total : {total:.2f}€
-📍 Adresse : {adresse}
-
-Nous vous contacterons au {telephone} si nécessaire.
-
-Cordialement,
-MD Consulting
-"""
-        mail.send(msg)
-    except Exception as e:
-        print("Erreur d'envoi de mail (direct) :", e)
 
     return jsonify({"success": True})
 
