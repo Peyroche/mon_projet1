@@ -1,6 +1,6 @@
 from flask_mail import Message
 
-def envoyer_confirmation_contact(app, mail, email, prenom, message):
+def envoyer_confirmation(app, mail, email, prenom, message):
     try:
         with app.app_context():
             msg = Message(
@@ -22,3 +22,6 @@ L’équipe MD Consulting
             mail.send(msg)
     except Exception as e:
         print("Erreur SMTP contact :", e)
+
+
+
