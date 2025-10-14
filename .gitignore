@@ -15,3 +15,7 @@ env/
 # Dossiers spécifiques aux éditeurs
 .vscode/
 .idea/
+
+static/images/
+*.jpg
+*.png
