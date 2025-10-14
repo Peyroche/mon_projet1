@@ -6,7 +6,6 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
-from app import app, db, Product
 from sqlalchemy import text
 import psutil
 from utils.mail import envoyer_confirmation
@@ -28,16 +27,7 @@ mail = Mail(app)
 try:
     with app.app_context():
         db.session.execute(text("SELECT 1"))
-        print("✅ Connexion à la base MySQL réussie")
-
-        # ✅ Mise à jour de l'image du produit
-        produit = Product.query.filter_by(nom="Savon en boîte").first()
-        if produit:
-            produit.image = "Savon_en_boite.jpg"
-            db.session.commit()
-            print("✅ Image mise à jour dans la base.")
-        else:
-            print("❌ Produit non trouvé.")
+    print("✅ Connexion à la base MySQL réussie")
 except Exception as e:
     print("❌ Erreur de connexion à la base :", e)
 
