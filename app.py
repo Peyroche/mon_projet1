@@ -122,8 +122,6 @@ def serve_static(filename):
 # 🏠 Accueil
 @app.route('/')
 def accueil():
-    if session.get("user_id"):
-        return redirect(url_for("afficher_produits"))
     return render_template("accueil.html")
 
 @app.route("/afficher_produits")
