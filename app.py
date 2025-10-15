@@ -122,6 +122,8 @@ def serve_static(filename):
 # 🏠 Accueil
 @app.route('/')
 def accueil():
+    if session.get("user_id"):
+        return redirect(url_for("afficher_produits"))
     return render_template("accueil.html")
 
 @app.route("/afficher_produits")
@@ -137,7 +139,6 @@ def panier():
     user_id = session.get('user_id')
     return render_template("panier.html", user_id=user_id)
 
-@app.route("/contact", methods=["GET", "POST"])
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if not session.get("user_id"):
