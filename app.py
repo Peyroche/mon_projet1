@@ -126,9 +126,8 @@ def accueil():
 
 @app.route("/afficher_produits")
 def afficher_produits():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
     produits = Product.query.all()
+    print("📦 Produits récupérés :", produits)
     return render_template("produits.html", produits=produits)
 
 @app.route("/panier")
