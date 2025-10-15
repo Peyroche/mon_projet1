@@ -213,6 +213,10 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+@app.route("/mentions-legales")
+def mentions_legales():
+    return render_template("mentions_legales.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
