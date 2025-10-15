@@ -7,20 +7,27 @@
 
   <section>
 
-    <h2>Nos Produits</h2>
-    <ul>
-      {% for produit in produits %}
-        <li>
-          <div class="product">
-            <h3>{{ produit.nom }}</h3>
-            <img src="{{ url_for('static', filename='images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="product-image">
-            <p>Prix : {{ produit.prix }}€</p>
-            <p>Stock : {{ produit.stock }}</p>
-            <button class="add-to-cart" data-nom="{{ produit.nom }}" data-price="{{ produit.prix }}">Ajouter au panier</button>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+       <h2>Nos Produits</h2>
+<ul>
+  <li>
+    <div class="product">
+      <h3>Savon en boîte</h3>
+      <img src="{{ url_for('static', filename='images/Savon_en_boite.jpg') }}" alt="Savon en boîte" class="product-image">
+      <p>Prix : 15.0€</p>
+      <p>Stock : 10</p>
+      <button class="add-to-cart" data-nom="Savon en boîte" data-price="15.0">Ajouter au panier</button>
+    </div>
+  </li>
+  <li>
+    <div class="product">
+      <h3>Savon en bouteille</h3>
+      <img src="{{ url_for('static', filename='images/Savon_en_bouteille.jpg') }}" alt="Savon en bouteille" class="product-image">
+      <p>Prix : 18.0€</p>
+      <p>Stock : 8</p>
+      <button class="add-to-cart" data-nom="Savon en bouteille" data-price="18.0">Ajouter au panier</button>
+    </div>
+  </li>
+</ul>
 
   </section>
 
