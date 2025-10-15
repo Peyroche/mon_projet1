@@ -50,7 +50,7 @@ main {
 button {
     padding: 10px;
     border: none;
-    background-color: #28a745;
+    background-color: blue;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
