@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Accueil - Ma Boutique{% endblock %}
+{% block title %}MD Consulting{% endblock %}
 
 {% block content %}
 
 <main>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST" action="{{ url_for('login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <input type="email" name="email" class="form-control mb-3" placeholder="Email" required>
+        <input type="password" name="motdepasse" class="form-control mb-3" placeholder="Mot de passe" required>
+        
+        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+      </form>
 
-<section>
-
-<h2 id="connexion">Connexion</h2>
-<form action="{{ url_for('connexion') }}" method="post" class="contact-form">
-  <input type="email" name="email" placeholder="Adresse e-mail" class="contact-input" required>
-  <input type="password" name="motdepasse" placeholder="Mot de passe" class="contact-input" required>
-  <input type="submit" value="Se connecter" class="contact-button">
-</form>
-
-</section>
-
+    </div>
+  </div>
+</div>
 </main>
-  
-  {% endblock %}
+{% endblock %}
