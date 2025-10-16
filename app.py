@@ -137,6 +137,9 @@ def panier():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if not session.get("user_id"):
+        return redirect(url_for("signup"))
+
     if request.method == "POST":
         nom = request.form["nom"]
         prenom = request.form["prenom"]
@@ -164,25 +167,7 @@ def contact():
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
-    return render_template("contact.html")
-
-@app.route('/login', methods=['POST'])
-def login():
-    email = request.form['email']
-    motdepasse = request.form['motdepasse']
-
-    # Recherche de l'utilisateur par email
-    user = User.query.filter_by(email=email).first()
-
-    if user and check_password_hash(user.motdepasse, motdepasse):
-        # Authentification réussie → création de session
-        session['user_id'] = user.id
-        flash("Connexion réussie !", "success")
-        return redirect(url_for('dashboard'))  # Redirige vers une page protégée
-    else:
-        # Échec de connexion
-        flash("Email ou mot de passe incorrect", "danger")
-        return redirect(url_for('home'))  # Ou vers la page de connexion
+    return render_template("contact.html", user_id=session["user_id"])
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -201,7 +186,7 @@ def signup():
         db.session.commit()
 
         session["user_id"] = nouvel_utilisateur.id
-        return redirect(url_for("panier"))
+        return redirect(url_for("afficher_produits"))
 
     return render_template("signup.html")
 

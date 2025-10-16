@@ -3,35 +3,23 @@
 {% block title %}MD Consulting{% endblock %}
 
 {% block content %}
-<main>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
 
-      <!-- Formulaire d'inscription -->
-      <div class="col-md-6">
-        <h3>Inscription</h3>
-        <form method="POST" action="{{ url_for('signup') }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <input type="text" name="nom" class="form-control mb-3" placeholder="Nom" required>
-          <input type="email" name="email" class="form-control mb-3" placeholder="Email" required>
-          <input type="password" name="motdepasse" class="form-control mb-3" placeholder="Mot de passe" required>
-          <input type="text" name="adresse" class="form-control mb-3" placeholder="Adresse" required>
-          <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
-        </form>
-      </div><br/>
-
-      <!-- Formulaire de connexion -->
-      <div class="col-md-6">
-        <h3>Connexion</h3>
-        <form method="POST" action="{{ url_for('login') }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <input type="email" name="email" class="form-control mb-3" placeholder="Email" required>
-          <input type="password" name="motdepasse" class="form-control mb-3" placeholder="Mot de passe" required>
-          <button type="submit" class="btn btn-success w-100">Se connecter</button>
-        </form>
-      </div>
-
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST" action="{{ url_for('signup') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <input type="text" name="nom" class="contact-input form-control mb-3" placeholder="Nom" required>
+        <input type="email" name="email" class="contact-input form-control mb-3" placeholder="Email" required>
+        <input type="password" name="motdepasse" class="contact-input form-control mb-3" placeholder="Mot de passe" required>
+        <input type="text" name="adresse" class="contact-input form-control mb-3" placeholder="Adresse" required>
+        
+        <button type="submit" class="btn btn-primary contact-button w-100">S'inscrire</button>
+      </form>
     </div>
   </div>
-</main>
+</div>
+
+</div>
 {% endblock %}
