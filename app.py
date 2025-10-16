@@ -164,25 +164,11 @@ def contact():
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
-    return render_template("contact.html", user_id=session["user_id"])
+    return render_template("contact.html")
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/connexion", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        motdepasse = request.form["motdepasse"]
-
-        utilisateur = User.query.filter_by(email=email).first()
-
-        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
-            session["user_id"] = utilisateur.id
-            flash("Connexion réussie !", "success")
-            return redirect(url_for("panier"))
-        else:
-            flash("Email ou mot de passe incorrect.", "danger")
-            return redirect(url_for("login"))
-
-    return render_template("login.html")
+    return render_template("connexion.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
