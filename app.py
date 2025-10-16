@@ -168,6 +168,20 @@ def contact():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        motdepasse = request.form["motdepasse"]
+
+        utilisateur = User.query.filter_by(email=email).first()
+
+        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
+            session["user_id"] = utilisateur.id
+            flash("Connexion réussie !", "success")
+            return redirect(url_for("panier"))
+        else:
+            flash("Email ou mot de passe incorrect.", "danger")
+            return redirect(url_for("login"))
+
     return render_template("login.html")
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -187,7 +201,7 @@ def signup():
         db.session.commit()
 
         session["user_id"] = nouvel_utilisateur.id
-        return redirect(url_for("afficher_produits"))
+        return redirect(url_for("panier"))
 
     return render_template("signup.html")
 
