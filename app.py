@@ -126,9 +126,7 @@ def accueil():
 
 @app.route("/afficher_produits")
 def afficher_produits():
-    produits = Product.query.all()
-    print("📦 Produits récupérés :", produits)
-    return render_template("produits.html", produits=produits)
+    return render_template("produits.html")
 
 @app.route("/panier")
 def panier():
@@ -139,9 +137,6 @@ def panier():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-
     if request.method == "POST":
         nom = request.form["nom"]
         prenom = request.form["prenom"]
