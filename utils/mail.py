@@ -24,4 +24,4 @@ L’équipe MD Consulting
         print("Erreur SMTP contact :", e)
 
 
-
+__all__ = ['envoyer_confirmation']

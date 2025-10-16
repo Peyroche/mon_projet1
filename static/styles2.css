@@ -191,6 +191,14 @@ footer {
   margin-top: auto;
 }
 
+footer a {
+  color: #555;
+  text-decoration: underline;
+  font-size: 0.9em;
+}
+footer a:hover {
+  color: #000;
+}
 
 /*MEDIA QUERIES pour les petits écrans (mobile)*/
 @media (max-width: 768px) {
