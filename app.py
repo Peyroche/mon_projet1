@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
-from models import db, User  # Assure-toi que ton modèle User est bien importé
 import psutil
 from utils.mail import envoyer_confirmation
 import threading
