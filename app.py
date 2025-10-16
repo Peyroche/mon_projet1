@@ -180,7 +180,7 @@ def login():
             return redirect(url_for("panier"))
         else:
             flash("Email ou mot de passe incorrect.", "danger")
-            return redirect(url_for("connexion"))
+            return redirect(url_for("login"))
 
     return render_template("login.html")
 
