@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
+from models import db, User  # Assure-toi que ton modèle User est bien importé
 import psutil
 from utils.mail import envoyer_confirmation
 import threading
@@ -165,6 +166,24 @@ def contact():
         return redirect(url_for("contact"))
 
     return render_template("contact.html")
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['email']
+    motdepasse = request.form['motdepasse']
+
+    # Recherche de l'utilisateur par email
+    user = User.query.filter_by(email=email).first()
+
+    if user and check_password_hash(user.motdepasse, motdepasse):
+        # Authentification réussie → création de session
+        session['user_id'] = user.id
+        flash("Connexion réussie !", "success")
+        return redirect(url_for('dashboard'))  # Redirige vers une page protégée
+    else:
+        # Échec de connexion
+        flash("Email ou mot de passe incorrect", "danger")
+        return redirect(url_for('home'))  # Ou vers la page de connexion
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
