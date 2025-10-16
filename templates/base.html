@@ -19,7 +19,6 @@
     <a href="{{ url_for('accueil') }}">Accueil</a>
     <a href="{{ url_for('afficher_produits') }}">Produits</a>
     <a href="{{ url_for('panier') }}">Panier</a>
-    <a href="{{ url_for('contact') }}">Contact</a>
 
     {% if session.get("user_id") %}
         <a href="{{ url_for('logout') }}">Déconnexion</a>
@@ -42,6 +41,7 @@
 <footer>
     <p>© 2025 MD Consulting - Tous droits réservés</p>
     <p><a href="{{ url_for('mentions_legales') }}">Mentions légales</a></p>
+    <P><a href="{{ url_for('contact') }}">Contact</a></p>
 </footer>
 
 </body>
