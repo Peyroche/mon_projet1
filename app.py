@@ -167,6 +167,7 @@ def contact():
     return render_template("contact.html")
 
 @app.route("/login", methods=["GET", "POST"])
+@app.route("/connexion", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form["email"]
