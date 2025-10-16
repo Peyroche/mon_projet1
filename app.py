@@ -167,7 +167,7 @@ def contact():
     return render_template("contact.html")
 
 @app.route("/connexion", methods=["GET", "POST"])
-def login():
+def connexion():
     return render_template("connexion.html")
 
 @app.route("/signup", methods=["GET", "POST"])
