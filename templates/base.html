@@ -19,15 +19,14 @@
     <a href="{{ url_for('accueil') }}">Accueil</a>
     <a href="{{ url_for('afficher_produits') }}">Produits</a>
     <a href="{{ url_for('panier') }}">Panier</a>
-
     {% if session.get("user_id") %}
         <a href="{{ url_for('logout') }}">Déconnexion</a>
         {% if utilisateur %}
         {% endif %}
     {% else %}
-        <a href="{{ url_for('connexion') }}">Connexion</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
     {% endif %}
+   <a href="{{ url_for('connexion') }}">Connexion</a>
+   <a href="{{ url_for('contact') }}">Contact</a>
 </nav>
 
 </header>
