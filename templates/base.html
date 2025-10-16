@@ -23,7 +23,7 @@
   {% if session.get("user_id") %}
     <a href="{{ url_for('logout') }}">Déconnexion</a>
   {% else %}
-    <a href="{{ url_for('connexion') }}">Connexion</a>
+    <a href="{{ url_for('login') }}">Connexion</a>
   {% endif %}
 
   <a href="{{ url_for('contact') }}">Contact</a>
