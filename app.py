@@ -167,7 +167,7 @@ def contact():
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
-    return render_template("contact.html", user_id=session["user_id"])
+    return render_template("contact.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
