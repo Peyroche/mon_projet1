@@ -15,19 +15,24 @@
         <h1>MD Consulting Mico-Entreprise</h1>
     </div>
 
-   <nav>
+<nav>
+  {% if request.endpoint == 'panier' and session.get("user_id") %}
+    <a href="{{ url_for('afficher_produits') }}">Produits</a>
+    <a href="{{ url_for('panier') }}">Panier</a>
+  {% else %}
     <a href="{{ url_for('accueil') }}">Accueil</a>
     <a href="{{ url_for('afficher_produits') }}">Produits</a>
     <a href="{{ url_for('panier') }}">Panier</a>
-    <a href="{{ url_for('contact') }}">Contact</a>
 
     {% if session.get("user_id") %}
-        <a href="{{ url_for('logout') }}">Déconnexion</a>
+      <a href="{{ url_for('logout') }}">Déconnexion</a>
     {% else %}
-        <a href="{{ url_for('login') }}">Connexion</a>
-        <a href="{{ url_for('signup') }}">Inscription</a>
+      <a href="{{ url_for('login') }}">Connexion</a>
+      <a href="{{ url_for('signup') }}">Inscription</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
     {% endif %}
-  </nav>
+  {% endif %}
+</nav>
 
 </header>
 
