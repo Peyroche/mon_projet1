@@ -137,9 +137,6 @@ def panier():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-
     if request.method == "POST":
         nom = request.form["nom"]
         prenom = request.form["prenom"]
@@ -186,7 +183,7 @@ def signup():
         db.session.commit()
 
         session["user_id"] = nouvel_utilisateur.id
-        return redirect(url_for("afficher_produits"))
+        return redirect(url_for("panier"))
 
     return render_template("signup.html")
 
@@ -200,7 +197,7 @@ def login():
         if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
             session["user_id"] = utilisateur.id
             flash("Connexion réussie !", "success")
-            return redirect(url_for("afficher_produits"))
+            return redirect(url_for("panier"))
         else:
             flash("Identifiants incorrects.", "danger")
             return redirect(url_for("login"))
