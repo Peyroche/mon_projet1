@@ -17,7 +17,6 @@
 
 <nav>
   {% if request.endpoint == 'panier' and session.get("user_id") %}
-    <a href="{{ url_for('afficher_produits') }}">Produits</a>
     <a href="{{ url_for('panier') }}">Panier</a>
     <a href="{{ url_for('logout') }}">Déconnexion</a>
   {% else %}
