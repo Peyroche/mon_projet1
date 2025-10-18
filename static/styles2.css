@@ -95,25 +95,6 @@ button {
   align-items: center;
 }
 
-/*MENTIONS_LEGALES*/
-.mention {
-  display: grid;
-  grid-column-gap: 3rem;
-  max-width: 1024px;
-  margin: auto;
-  padding: 2rem;
-}
-
-.texte {
-  text-align: justify;
-text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-p {
-    font-size: 1.2em;
-    line-height: 1.5;
-}
-
 /* ACCUEIL */
 .accueil {
   display: grid;
