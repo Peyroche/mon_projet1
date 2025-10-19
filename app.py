@@ -10,9 +10,13 @@ from sqlalchemy import text
 import psutil
 from utils.mail import envoyer_confirmation
 import threading
+from flask import Blueprint, Response
+from datetime import date
 import os
 
 print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
+
+sitemap_bp = Blueprint('sitemap', __name__)
 
 # 🔧 Initialisation de l'application
 app = Flask(__name__)
@@ -113,6 +117,24 @@ def valider_commande():
         print("Erreur d'envoi de mail (thread contact) :", e)
 
     return jsonify({"success": True})
+
+@sitemap_bp.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    pages = [
+        {'loc': 'https://mdconsulting.fr/', 'priority': '1.0'},
+        {'loc': 'https://mdconsulting.fr/contact', 'priority': '0.8'},
+        {'loc': 'https://mdconsulting.fr/services', 'priority': '0.7'}
+    ]
+    today = date.today().isoformat()
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for page in pages:
+        xml += f"  <url>\n    <loc>{page['loc']}</loc>\n"
+        xml += f"    <lastmod>{today}</lastmod>\n"
+        xml += f"    <priority>{page['priority']}</priority>\n  </url>\n"
+    xml += '</urlset>'
+    return Response(xml, mimetype='application/xml')
+
 
 # 🌍 Fichiers statiques
 @app.route('/static/<path:filename>')
