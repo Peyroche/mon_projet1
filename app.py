@@ -15,6 +15,29 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
+mail = Mail(app)
+
+# Configuration Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'ton_email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'mot_de_passe_app'
+
+@app.route('/commande')
+def commande():
+    envoyer_confirmation(
+        app,
+        mail,
+        email="client@example.com",
+        prenom="Jean",
+        items="Produit X",
+        total=49.99,
+        adresse="12 rue Exemple, Paris",
+        telephone="0601020304"
+    )
+    return "Commande envoyée !"
+
 # 🔒 Sécurité & extensions
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
@@ -213,4 +236,4 @@ def mentions_legales():
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=true)
+    app.run(host="0.0.0.0", port=port)

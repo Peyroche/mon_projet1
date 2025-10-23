@@ -1,8 +1,6 @@
 from flask_mail import Message
 
-with app.app_context():
-    envoyer_confirmation(app, mail, "ton_email_test@example.com", "Test", "Produit X", 10.0, "Adres")
-
+def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
     with app.app_context():
         try:
             msg = Message(
