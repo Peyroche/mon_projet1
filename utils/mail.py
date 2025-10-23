@@ -1,7 +1,7 @@
 from flask_mail import Message
 
 with app.app_context():
-    envoyer_confirmation(app, mail, "ton_email_test@example.com", "Test", "Produit X", 10.0, "Adres):
+    envoyer_confirmation(app, mail, "ton_email_test@example.com", "Test", "Produit X", 10.0, "Adres")
 
     with app.app_context():
         try:
