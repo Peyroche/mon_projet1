@@ -10,7 +10,6 @@ from sqlalchemy import text
 import psutil
 from utils.mail import envoyer_confirmation
 import threading
-import traceback
 import os
 
 print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
@@ -31,20 +30,6 @@ try:
     print("✅ Connexion à la base MySQL réussie")
 except Exception as e:
     print("❌ Erreur de connexion à la base :", e)
-
-
-@app.route("/test-mail")
-def test_mail():
-    envoyer_confirmation(
-        app, mail,
-        email="ton.email.perso@gmail.com",
-        prenom="Test",
-        items="Savon noir (9.99€)",
-        total=9.99,
-        adresse="12 rue des Lilas",
-        telephone="0612345678"
-    )
-    return "Mail envoyé (si tout est bien configuré)"
 
 # 🔐 Sécurité des cookies
 app.config["SESSION_COOKIE_HTTPONLY"] = True
@@ -119,43 +104,15 @@ def valider_commande():
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
- # ✅ Envoi du mail après enregistrement réussi
     try:
         threading.Thread(
             target=envoyer_confirmation,
-            args=(app, mail, email, prenom, items, total, adresse, telephone)
+            args=(app, mail, email, prenom, message)
         ).start()
     except Exception as e:
         print("Erreur d'envoi de mail (thread contact) :", e)
-        print("📤 Tentative d'envoi de mail à :", email)
 
     return jsonify({"success": True})
-     
-def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
-    with app.app_context():
-        try:
-            msg = Message(
-                subject="Confirmation de votre commande",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-            msg.body = f"""Bonjour {prenom},
-
-Merci pour votre commande !
-
-📦 Produits : {items}
-💰 Total : {total:.2f}€
-📍 Adresse : {adresse}
-
-Nous vous contacterons au {telephone} si nécessaire.
-
-Cordialement,
-MD Consulting
-"""
-            mail.send(msg)
-        except Exception as e:
-            print("Erreur d'envoi de mail :", e)
-            print("❌ Erreur d'envoi de mail :", traceback.format_exc())
 
 # 🌍 Fichiers statiques
 @app.route('/static/<path:filename>')
