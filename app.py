@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
-from utils.mail import envoyer_confirmation
 import threading
 import os
 
@@ -126,13 +125,37 @@ def valider_commande():
 
     try:
         threading.Thread(
-            target=envoyer_confirmation_contact,
+            target=envoyer_confirmation,
             args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
     except Exception as e:
         print("Erreur d'envoi de mail (thread contact) :", e)
 
     return jsonify({"success": True})
+
+
+def envoyer_confirmation_contact(app, mail, email, prenom, message):
+    with app.app_context():
+        try:
+            msg = Message(
+                subject="Confirmation de votre message",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[email]
+            )
+            msg.body = f"""Bonjour {prenom},
+
+Merci pour votre message :
+
+📝 "{message}"
+
+Nous vous répondrons dans les plus brefs délais.
+
+Cordialement,
+MD Consulting
+"""
+            mail.send(msg)
+        except Exception as e:
+            print("Erreur d'envoi de mail (contact) :", e)
 
 # 🌍 Fichiers statiques
 @app.route('/static/<path:filename>')
