@@ -7,12 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from sqlalchemy import text
-import psutil
 from utils.mail import envoyer_confirmation
 import threading
 import os
-
-print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
 
 # 🔧 Initialisation de l'application
 app = Flask(__name__)
@@ -107,7 +104,7 @@ def valider_commande():
     try:
         threading.Thread(
             target=envoyer_confirmation,
-            args=(app, mail, email, prenom, message)
+            args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
     except Exception as e:
         print("Erreur d'envoi de mail (thread contact) :", e)
