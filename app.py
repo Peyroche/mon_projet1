@@ -103,7 +103,7 @@ def valider_commande():
 
     try:
         threading.Thread(
-            target=envoyer_confirmation,
+            target=envoyer_confirmation_contact,
             args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
     except Exception as e:
@@ -213,4 +213,4 @@ def mentions_legales():
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=true)
