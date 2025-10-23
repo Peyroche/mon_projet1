@@ -47,8 +47,6 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_TIMEOUT = 10  # en secondes
-    MAIL_SUPPRESS_SEND = False
-    MAIL_DEBUG = True
 
 # 🔍 Test local (non exécuté sur Render)
 if __name__ == "__main__":
