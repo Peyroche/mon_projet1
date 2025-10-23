@@ -1,133 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-/* PRODUITS */
-
-.product img {
-  width: 100px;       /* fixe la largeur */
-  height: 100px;       /* conserve les proportions */
-  display: block;
-  margin: 0 auto 15px;
-  border-radius: 8px; /* angles arrondis (optionnel) */
-}
-
-.product {
+/* ========== BASE ========== */
+body, html {
+  font-family: 'Roboto', sans-serif;
   text-align: center;
-  max-width: 300px;
-  margin: 20px auto;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.product h2 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-}
-
-.product p {
-  font-size: 0.95rem;
-  margin-bottom: 12px;
-}
-
-main {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
-  justify-content: center;     /* centre le tout horizontalement */
-  gap: 30px;                   /* espace entre les produits */
-  padding: 20px;
-  flex-wrap: wrap;             /* permet de revenir à la ligne si nécessaire */
+  flex-direction: column;
+  background-color: black;
 }
 
-.product:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease-in-out;
-}
-
-.add-to-cart:active {
-    animation: addCart 0.3s;
-}
-
-button {
-    padding: 10px;
-    border: none;
-    background-color: blue;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
-
-
-/* PANIER */
-
-#checkout {
-    padding: 12px;
-    background: #ff9800;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-}
-
-#checkout:hover {
-    background: #e68900;
-}
-
-#confirmationMessage {
-    font-weight: bold;
-    color: green;
-    margin-top: 10px;
-    animation: fadeIn 1s forwards;
-}
-
-#cart {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-#cart li {
-  background-color: #f3f3f3;
-  padding: 8px;
-  margin-bottom: 6px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* ACCUEIL */
-.accueil {
-  display: grid;
-  grid-column-gap: 3rem;
-  max-width: 1024px;
-  margin: auto;
-  padding: 2rem;
-}
-
-.texte {
-  text-align: justify;
-text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-p {
-    font-size: 1.2em;
-    line-height: 1.5;
-}
-
-button:focus, nav a:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
-
-
-/* BASE */
-
-header {background-color: black;
+header, footer {
+  background-color: black;
   color: white;
   text-align: center;
   padding: 20px;
 }
 
+footer {
+  margin-top: auto;
+}
+
+main {
+  flex: 1;
+  padding: 1em;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* ========== NAVIGATION ========== */
 .header-container {
   display: flex;
   align-items: center;
@@ -153,57 +58,135 @@ nav a {
   transition: color 0.3s ease-in-out;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background-color: black;
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-  padding: 1em;
-}
-
-
-/* CONTACT */
-
-h2 {  text-align: center;
-}
-
-
-/*MENTION LEGAL/
-.mentions_légales {text-align: justify;
-text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-
-/* FOOTER */
-
-footer {
-  background-color: black;
-  text-align: center;
+button, #checkout {
+  padding: 10px;
+  border: none;
   color: white;
-  padding: 1em 0;
-  margin-top: auto;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
 
-/*MEDIA QUERIES pour les petits écrans (mobile)*/
+button {
+  background-color: blue;
+}
+
+button:focus, nav a:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+#checkout {
+  background: #ff9800;
+}
+
+#checkout:hover {
+  background: #e68900;
+}
+
+/* ========== PRODUITS ========== */
+.product {
+  text-align: center;
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.product:hover {
+  transform: scale(1.05);
+}
+
+.product img {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 0 auto 15px;
+  border-radius: 8px;
+}
+
+.product h2 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.product p {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.add-to-cart:active {
+  animation: addCart 0.3s;
+}
+
+/* ========== PANIER ========== */
+#cart {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+#cart li {
+  background-color: #f3f3f3;
+  padding: 8px;
+  margin-bottom: 6px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#confirmationMessage {
+  font-weight: bold;
+  color: green;
+  margin-top: 10px;
+  animation: fadeIn 1s forwards;
+}
+
+/* ========== ACCUEIL & CONTACT ========== */
+.accueil {
+  display: grid;
+  grid-column-gap: 3rem;
+  max-width: 1024px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.texte, .mentions_légales {
+  text-align: justify;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+p {
+  font-size: 1.2em;
+  line-height: 1.5;
+}
+
+h2 {
+  text-align: center;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes addCart {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   header, footer {
     padding: 10px;
     font-size: 0.9rem;
   }
-}
 
-@media (max-width: 768px) {
   .product {
     max-width: 90%;
     margin: 15px auto;
@@ -247,9 +230,15 @@ footer {
     gap: 10px;
   }
 
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   nav a {
     display: block;
-    margin: 10px 0;
+    margin: 8px 0;
   }
 
   .logo {
@@ -257,24 +246,6 @@ footer {
   }
 }
 
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes addCart {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-/*MEDIA QUERIES pour les grands écrans (desktop)*/
 @media (min-width: 1200px) {
   .product {
     max-width: 280px;
@@ -310,19 +281,3 @@ footer {
     font-size: 1.1rem;
   }
 }
-
-@media (max-width: 768px) {  /*menu hamburger ou une version mobile*/
-  nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  nav a {
-    margin: 8px 0;
-  }
-}
-
-
-
-
