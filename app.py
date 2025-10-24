@@ -1,27 +1,27 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash, session
-from config import Config
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_wtf import CSRFProtect
-from flask_mail import Mail, Message
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timezone
-from validator import validate_signup_data, validate_commande_data, validate_contact_data
-from sqlalchemy import text
-import psutil
-from config import envoyer_confirmation
-import threading
+# 📦 Imports
 import os
-
-print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
+import threading
+from datetime import datetime, timezone
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+from flask_wtf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import text
+from config import Config
+from validator import validate_signup_data, validate_commande_data, validate_contact_data
 
 # 🔧 Initialisation de l'application
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# 🔒 Sécurité & extensions
+# 🔐 Configuration complémentaire
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+# 🔌 Extensions
 csrf = CSRFProtect(app)
-db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 mail = Mail(app)
+db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 
 # ✅ Test de connexion à la base
 try:
@@ -30,9 +30,6 @@ try:
     print("✅ Connexion à la base MySQL réussie")
 except Exception as e:
     print("❌ Erreur de connexion à la base :", e)
-
-# 🔐 Sécurité des cookies
-app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 # 🧱 Modèles SQLAlchemy
 class Order(db.Model):
@@ -67,6 +64,47 @@ class MessageContact(db.Model):
 
 with app.app_context():
     db.create_all()
+
+# 📬 Fonction d'envoi de mail
+def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
+    with app.app_context():
+        try:
+            msg = Message(
+                subject="Confirmation de votre commande",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[email]
+            )
+            msg.body = f"""Bonjour {prenom},
+
+Merci pour votre commande !
+
+📦 Produits : {items}
+💰 Total : {total:.2f}€
+📍 Adresse : {adresse}
+
+Nous vous contacterons au {telephone} si nécessaire.
+
+Cordialement,
+MD Consulting
+"""
+            mail.send(msg)
+        except Exception as e:
+            print("Erreur d'envoi de mail :", e)
+
+# 📦 Route de test commande
+@app.route('/commande')
+def commande():
+    envoyer_confirmation(
+        app,
+        mail,
+        email="client@example.com",
+        prenom="Jean",
+        items="Produit X",
+        total=49.99,
+        adresse="12 rue Exemple, Paris",
+        telephone="0601020304"
+    )
+    return "Commande envoyée !"
 
 # 📦 Route API commandes
 @app.route("/valider_commande", methods=["POST"])
@@ -110,32 +148,7 @@ def valider_commande():
             args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
     except Exception as e:
-        print("Erreur d'envoi de mail (thread) :", e)
-
-    return jsonify({"success": True})
-
-    try:
-        msg = Message(
-            subject="Confirmation de votre commande",
-            sender=app.config["MAIL_USERNAME"],
-            recipients=[email]
-        )
-        msg.body = f"""Bonjour {prenom},
-
-Merci pour votre commande !
-
-📦 Produits : {items}
-💰 Total : {total:.2f}€
-📍 Adresse : {adresse}
-
-Nous vous contacterons au {telephone} si nécessaire.
-
-Cordialement,
-MD Consulting
-"""
-        mail.send(msg)
-    except Exception as e:
-        print("Erreur d'envoi de mail (direct) :", e)
+        print("Erreur d'envoi de mail (thread contact) :", e)
 
     return jsonify({"success": True})
 
@@ -144,17 +157,14 @@ MD Consulting
 def serve_static(filename):
     return send_from_directory(os.path.join(app.root_path, 'static'), filename)
 
-# 🏠 Accueil
+# 🏠 Pages principales
 @app.route('/')
 def accueil():
     return render_template("accueil.html")
 
 @app.route("/afficher_produits")
 def afficher_produits():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-    produits = Product.query.all()
-    return render_template("produits.html", produits=produits)
+    return render_template("produits.html")
 
 @app.route("/panier")
 def panier():
@@ -165,9 +175,6 @@ def panier():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-
     if request.method == "POST":
         nom = request.form["nom"]
         prenom = request.form["prenom"]
@@ -184,46 +191,17 @@ def contact():
         db.session.commit()
 
         try:
-            msg = Message(
-                subject="Message reçu - Ma Boutique",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-            msg.body = f"""Bonjour {prenom},
-
-Nous avons bien reçu votre message :
-
-"{message}"
-
-Nous vous répondrons dans les plus brefs délais.
-
-Cordialement,
-L’équipe MD Consulting
-"""
-            mail.send(msg)
+            threading.Thread(
+                target=envoyer_confirmation,
+                args=(app, mail, email, prenom, message, 0, "contact", "N/A")
+            ).start()
         except Exception as e:
-            print("Erreur d'envoi de mail :", e)
+            print("Erreur d'envoi de mail (contact) :", e)
 
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
-    return render_template("contact.html", user_id=session["user_id"])
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        motdepasse = request.form["motdepasse"]
-        utilisateur = User.query.filter_by(email=email).first()
-
-        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
-            session["user_id"] = utilisateur.id
-            return redirect(url_for("afficher_produits"))
-        else:
-            flash("Email ou mot de passe incorrect.", "danger")
-            return redirect(url_for("login"))
-
-    return render_template("login.html")
+    return render_template("contact.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -242,14 +220,35 @@ def signup():
         db.session.commit()
 
         session["user_id"] = nouvel_utilisateur.id
-        return redirect(url_for("afficher_produits"))
+        return redirect(url_for("panier"))
 
     return render_template("signup.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        motdepasse = request.form["motdepasse"]
+
+        utilisateur = User.query.filter_by(email=email).first()
+        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
+            session["user_id"] = utilisateur.id
+            flash("Connexion réussie !", "success")
+            return redirect(url_for("panier"))
+        else:
+            flash("Identifiants incorrects.", "danger")
+            return redirect(url_for("login"))
+
+    return render_template("login.html")
 
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+@app.route("/mentions-legales")
+def mentions_legales():
+    return render_template("mentions_legales.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
