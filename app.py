@@ -1,19 +1,24 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash, session
 from config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_mail import Mail
-from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import text
-from utils.mail import envoyer_confirmation_commande, envoyer_confirmation_contact
+from flask_wtf import CSRFProtect
+from flask_mail import Mail, Message
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timezone
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
+from sqlalchemy import text
+import psutil
+from utils.mail import envoyer_confirmation
 import threading
 import os
-from datetime import datetime, timezone
 
+print("🧠 Mémoire utilisée :", psutil.virtual_memory().percent, "%")
+
+# 🔧 Initialisation de l'application
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# 🔒 Sécurité & extensions
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 mail = Mail(app)
@@ -29,7 +34,7 @@ except Exception as e:
 # 🔐 Sécurité des cookies
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
-# 🧱 Modèles
+# 🧱 Modèles SQLAlchemy
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -63,7 +68,7 @@ class MessageContact(db.Model):
 with app.app_context():
     db.create_all()
 
-# 📦 Commande
+# 📦 Route API commandes
 @app.route("/valider_commande", methods=["POST"])
 @csrf.exempt
 def valider_commande():
@@ -101,15 +106,35 @@ def valider_commande():
 
     try:
         threading.Thread(
-            target=envoyer_confirmation_commande,
-            args=(app, mail, email, prenom, items, total, adresse, telephone)
+            target=envoyer_confirmation,
+            args=(app, mail, email, prenom, message)
         ).start()
     except Exception as e:
-        print("Erreur d'envoi de mail (commande) :", e)
+        print("Erreur d'envoi de mail (thread contact) :", e)
 
     return jsonify({"success": True})
 
-# 📬 Contact
+# 🌍 Fichiers statiques
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(os.path.join(app.root_path, 'static'), filename)
+
+# 🏠 Accueil
+@app.route('/')
+def accueil():
+    return render_template("accueil.html")
+
+@app.route("/afficher_produits")
+def afficher_produits():
+    return render_template("produits.html")
+
+@app.route("/panier")
+def panier():
+    if not session.get("user_id"):
+        return redirect(url_for("signup"))
+    user_id = session.get('user_id')
+    return render_template("panier.html", user_id=user_id)
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -127,6 +152,7 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
+        # ✅ Envoi du mail dans un thread
         try:
             threading.Thread(
                 target=envoyer_confirmation_contact,
@@ -139,22 +165,6 @@ def contact():
         return redirect(url_for("contact"))
 
     return render_template("contact.html")
-
-# 🧭 Navigation
-@app.route('/')
-def accueil():
-    return render_template("accueil.html")
-
-@app.route("/afficher_produits")
-def afficher_produits():
-    return render_template("produits.html")
-
-@app.route("/panier")
-def panier():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-    user_id = session.get('user_id')
-    return render_template("panier.html", user_id=user_id)
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -176,6 +186,32 @@ def signup():
         return redirect(url_for("panier"))
 
     return render_template("signup.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        motdepasse = request.form["motdepasse"]
+
+        utilisateur = User.query.filter_by(email=email).first()
+        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
+            session["user_id"] = utilisateur.id
+            flash("Connexion réussie !", "success")
+            return redirect(url_for("panier"))
+        else:
+            flash("Identifiants incorrects.", "danger")
+            return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+@app.route("/mentions-legales")
+def mentions_legales():
+    return render_template("mentions_legales.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":

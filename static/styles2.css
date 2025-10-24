@@ -179,6 +179,12 @@ main {
 h2 {  text-align: center;
 }
 
+
+/*MENTION LEGAL/
+.mentions_légales {text-align: justify;
+text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
 /* FOOTER */
 
 footer {
@@ -302,6 +308,18 @@ footer {
 
   nav a {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {  /*menu hamburger ou une version mobile*/
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav a {
+    margin: 8px 0;
   }
 }
 
