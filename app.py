@@ -25,7 +25,7 @@ app.config['MAIL_USERNAME'] = 'ton_email@gmail.com'
 app.config['MAIL_PASSWORD'] = 'mot_de_passe_app'
 
 # 🛢️ Configuration SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost:3306/ma_base_locale'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@host:port/dbname'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "pool_pre_ping": True,
