@@ -1,27 +1,42 @@
-# 📦 Imports
-import os
-import threading
-from datetime import datetime, timezone
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_mail import Mail, Message
-from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import CSRFProtect
+from flask_mail import Mail, Message
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timezone
 from sqlalchemy import text
-from config import Config
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
+import threading
+import os
 
 # 🔧 Initialisation de l'application
 app = Flask(__name__)
-app.config.from_object(Config)
 
-# 🔐 Configuration complémentaire
-app.config["SESSION_COOKIE_HTTPONLY"] = True
+# 🔐 Configuration de l'application
+app.config['SECRET_KEY'] = 'dev_key'
+app.config['WTF_CSRF_SECRET_KEY'] = 'csrf_dev_key'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-# 🔌 Extensions
+# 📬 Configuration Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'ton_email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'mot_de_passe_app'
+
+# 🛢️ Configuration SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost:3306/ma_base_locale'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 280,
+    "connect_args": {"connect_timeout": 10}
+}
+
+# 🔌 Initialisation des extensions
 csrf = CSRFProtect(app)
 mail = Mail(app)
-db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
+db = SQLAlchemy(app)
 
 # ✅ Test de connexion à la base
 try:
@@ -65,47 +80,6 @@ class MessageContact(db.Model):
 with app.app_context():
     db.create_all()
 
-# 📬 Fonction d'envoi de mail
-def envoyer_confirmation(app, mail, email, prenom, items, total, adresse, telephone):
-    with app.app_context():
-        try:
-            msg = Message(
-                subject="Confirmation de votre commande",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-            msg.body = f"""Bonjour {prenom},
-
-Merci pour votre commande !
-
-📦 Produits : {items}
-💰 Total : {total:.2f}€
-📍 Adresse : {adresse}
-
-Nous vous contacterons au {telephone} si nécessaire.
-
-Cordialement,
-MD Consulting
-"""
-            mail.send(msg)
-        except Exception as e:
-            print("Erreur d'envoi de mail :", e)
-
-# 📦 Route de test commande
-@app.route('/commande')
-def commande():
-    envoyer_confirmation(
-        app,
-        mail,
-        email="client@example.com",
-        prenom="Jean",
-        items="Produit X",
-        total=49.99,
-        adresse="12 rue Exemple, Paris",
-        telephone="0601020304"
-    )
-    return "Commande envoyée !"
-
 # 📦 Route API commandes
 @app.route("/valider_commande", methods=["POST"])
 @csrf.exempt
@@ -148,7 +122,7 @@ def valider_commande():
             args=(app, mail, email, prenom, items, total, adresse, telephone)
         ).start()
     except Exception as e:
-        print("Erreur d'envoi de mail (thread contact) :", e)
+        print("Erreur d'envoi de mail (commande) :", e)
 
     return jsonify({"success": True})
 
@@ -157,7 +131,7 @@ def valider_commande():
 def serve_static(filename):
     return send_from_directory(os.path.join(app.root_path, 'static'), filename)
 
-# 🏠 Pages principales
+# 🏠 Accueil
 @app.route('/')
 def accueil():
     return render_template("accueil.html")
@@ -192,8 +166,8 @@ def contact():
 
         try:
             threading.Thread(
-                target=envoyer_confirmation,
-                args=(app, mail, email, prenom, message, 0, "contact", "N/A")
+                target=envoyer_confirmation_contact,
+                args=(app, mail, email, prenom, message)
             ).start()
         except Exception as e:
             print("Erreur d'envoi de mail (contact) :", e)
