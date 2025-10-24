@@ -10,6 +10,16 @@ class Config:
     WTF_CSRF_SECRET_KEY = os.environ.get("CSRF_SECRET_KEY", "csrf_dev_key")
     SESSION_COOKIE_HTTPONLY = True
 
+    if os.environ.get("FLASK_ENV") == "production":
+        raw_password = os.environ.get("DB_PASSWORD", "")
+        encoded_password = quote_plus(raw_password)
+        SQLALCHEMY_DATABASE_URI = (
+            f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
+            f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
+        )
+    else:
+        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:password@localhost:3306/ma_base_locale"
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
@@ -23,15 +33,3 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_TIMEOUT = 10  # en secondes
-
-# 🔄 Construction dynamique de l’URL SQL
-raw_password = os.environ.get("DB_PASSWORD", "")
-encoded_password = quote_plus(raw_password)
-
-if os.environ.get("FLASK_ENV") == "production":
-    Config.SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
-        f"@{os.environ['DB_HOST']}:{os.environ.get('DB_PORT', '3306')}/{os.environ['DB_NAME']}"
-    )
-else:
-    Config.SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:password@localhost:3306/ma_base_locale"
