@@ -194,6 +194,15 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))  # ou "accueil" si tu n’as pas encore de route login
+
+@app.route("/mentions_legales")
+def mentions_legales():
+    return render_template("mentions_legales.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
