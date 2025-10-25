@@ -177,6 +177,23 @@ def signup():
 
     return render_template("signup.html")
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        motdepasse = request.form["motdepasse"]
+
+        utilisateur = User.query.filter_by(email=email).first()
+
+        if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
+            session["user_id"] = utilisateur.id
+            return redirect(url_for("panier"))
+        else:
+            flash("Email ou mot de passe incorrect.", "danger")
+            return redirect(url_for("login"))
+
+    return render_template("login.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
