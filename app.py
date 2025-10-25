@@ -5,8 +5,8 @@ from flask_mail import Mail
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
-from utils.mail import envoyer_confirmation_commande, envoyer_confirmation_contact
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
+from utils.mail import envoyer_confirmation, envoyer_confirmation_commande
 import threading
 import os
 from datetime import datetime, timezone
