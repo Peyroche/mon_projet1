@@ -31,7 +31,6 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 
 # 🧱 Modèles
 class Order(db.Model):
-    __tablename__ = 'orders'  # nom non réservé
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(200), nullable=False)
@@ -47,7 +46,6 @@ class Product(db.Model):
     image = db.Column(db.String(255))
 
 class User(db.Model):
-    __tablename__ = 'users'  # évite le mot réservé 'user'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
