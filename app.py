@@ -89,10 +89,13 @@ def valider_commande():
     items = ", ".join([f"{item['produit']} ({item['prix']}€)" for item in panier])
 
     nouvelle_commande = Order(
-        name=f"{prenom} {nom}",
-        address=adresse,
-        items=items,
-        total_price=total
+    name=f"{prenom} {nom}",
+    prenom=prenom,
+    address=adresse,
+    telephone=telephone,
+    email=email,
+    items=items,
+    total_price=total
     )
 
     try:
