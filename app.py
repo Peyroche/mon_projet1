@@ -103,14 +103,6 @@ def valider_commande():
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
-    try:
-        threading.Thread(
-            target=envoyer_confirmation_commande,
-            args=(app, mail, email, prenom, items, total, adresse, telephone)
-        ).start()
-    except Exception as e:
-        print("Erreur d'envoi de mail (commande) :", e)
-
     return jsonify({"success": True})
 
 # 🧭 Navigation
