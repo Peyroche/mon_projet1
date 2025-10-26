@@ -37,7 +37,6 @@ class Order(db.Model):
     items = db.Column(db.String(500), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    status = db.Column(db.String(50), default="En attente")  # ou "Confirmée", "Expédiée", etc.
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -203,13 +202,6 @@ def logout():
 @app.route("/mentions_legales")
 def mentions_legales():
     return render_template("mentions_legales.html")
-
-@app.route("/commandes")
-def commandes():
-    commandes = Order.query.order_by(Order.date.desc()).all()
-    return redirect(url_for("login"))
-    user_id = session.get('user_id')
-    return render_template("commandes.html", user_id=user_id)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
