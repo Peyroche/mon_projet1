@@ -162,6 +162,10 @@ def panier():
     user_id = session.get('user_id')
     return render_template("panier.html", user_id=user_id)
 
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
