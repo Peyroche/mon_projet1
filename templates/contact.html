@@ -10,14 +10,6 @@
 
 <h2>Contactez-nous</h2>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="flash-message {{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 <form action="{{ url_for('contact') }}" method="post" class="contact-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="text" name="nom" placeholder="Nom" class="contact-input" required>
@@ -25,14 +17,15 @@
     <input type="email" name="email" placeholder="Email" class="contact-input" required>
     <textarea name="message" cols="80" rows="9" placeholder="Saisi le message" class="contact-input" required></textarea>
     <input type="submit" value="Envoyer" class="contact-button">
-  </form><br/>
+  </form>
 
-<div class="social" style="margin-top: 20px;">
-    <a href="https://www.facebook.com/profile.php?id=100076569482182" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-facebook'></i></a>
-    <a href="https://wa.me/33600000000" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-whatsapp'></i></a>
-    <a href="https://www.instagram.com/mercierfouna/" target="_blank" style="margin: 0 10px; color: white;"><i class='bx bxl-instagram'></i></a>
-  </div>
-</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 </section>
 
