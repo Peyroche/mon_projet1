@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session, send_from_directory
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
