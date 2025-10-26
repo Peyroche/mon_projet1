@@ -36,7 +36,7 @@ class Order(db.Model):
     prenom = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(200), nullable=False)
     telephone = db.Column(db.String(20), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), nullable=False)
     items = db.Column(db.String(500), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -163,15 +163,15 @@ def panier():
 def signup():
     if request.method == "POST":
         nom = request.form["nom"]
+        prenom = request.form["prenom"]
         email = request.form["email"]
         motdepasse = generate_password_hash(request.form["motdepasse"])
-        adresse = request.form["adresse"]
 
         if User.query.filter_by(email=email).first():
             flash("Email déjà utilisé.", "warning")
             return redirect(url_for("signup"))
 
-        nouvel_utilisateur = User(nom=nom, email=email, motdepasse=motdepasse, adresse=adresse)
+        nouvel_utilisateur = User(nom=nom, prenom=prenom, motdepasse=motdepasse)
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
