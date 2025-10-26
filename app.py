@@ -6,8 +6,6 @@ from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
-from utils.mail import envoyer_confirmation, envoyer_confirmation_commande
-import threading
 from datetime import datetime, timezone
 import os
 
@@ -115,7 +113,22 @@ def valider_commande():
 
     return jsonify({"success": True})
 
-# 📬 Contact
+# 🧭 Navigation
+@app.route('/')
+def accueil():
+    return render_template("accueil.html")
+
+@app.route("/afficher_produits")
+def afficher_produits():
+    return render_template("produits.html")
+
+@app.route("/panier")
+def panier():
+    if not session.get("user_id"):
+        return redirect(url_for("signup"))
+    user_id = session.get('user_id')
+    return render_template("panier.html", user_id=user_id)
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -133,37 +146,9 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
-        try:
-            threading.Thread(
-                target=envoyer_confirmation_contact,
-                args=(app, mail, email, prenom, message)
-            ).start()
-        except Exception as e:
-            print("Erreur d'envoi de mail (contact) :", e)
-
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
-    return render_template("contact.html")
-
-# 🧭 Navigation
-@app.route('/')
-def accueil():
-    return render_template("accueil.html")
-
-@app.route("/afficher_produits")
-def afficher_produits():
-    return render_template("produits.html")
-
-@app.route("/panier")
-def panier():
-    if not session.get("user_id"):
-        return redirect(url_for("signup"))
-    user_id = session.get('user_id')
-    return render_template("panier.html", user_id=user_id)
-
-@app.route("/contact")
-def contact():
     return render_template("contact.html")
 
 @app.route("/signup", methods=["GET", "POST"])
