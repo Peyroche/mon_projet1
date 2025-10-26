@@ -10,6 +10,14 @@
 
 <h2>Contactez-nous</h2>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <form action="{{ url_for('contact') }}" method="post" class="contact-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="text" name="nom" placeholder="Nom" class="contact-input" required>
