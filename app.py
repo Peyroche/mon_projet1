@@ -207,7 +207,9 @@ def mentions_legales():
 @app.route("/commandes")
 def commandes():
     commandes = Order.query.order_by(Order.date.desc()).all()
-    return render_template("commandes.html", commandes=commandes)
+    return redirect(url_for("login"))
+    user_id = session.get('user_id')
+    return render_template("commandes.html", user_id=user_id)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
