@@ -8,8 +8,8 @@ from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from utils.mail import envoyer_confirmation, envoyer_confirmation_commande
 import threading
-import os
 from datetime import datetime, timezone
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -33,7 +33,10 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(200), nullable=False)
+    telephone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     items = db.Column(db.String(500), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -48,9 +51,9 @@ class Product(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     motdepasse = db.Column(db.String(255), nullable=False)
-    adresse = db.Column(db.String(200), nullable=False)
 
 class MessageContact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
