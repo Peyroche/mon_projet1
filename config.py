@@ -2,22 +2,12 @@ import os
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
-# 📥 Chargement des variables d’environnement depuis .env (utile en local)
 load_dotenv()
 
-# ✅ Vérification des variables obligatoires
 required_vars = ["DB_USER", "DB_PASSWORD", "DB_HOST", "DB_NAME"]
 for var in required_vars:
     if not os.environ.get(var):
         raise RuntimeError(f"❌ Variable d'environnement manquante : {var}")
-
-# 🔐 Encodage sécurisé du mot de passe MySQL
-raw_password = os.environ["DB_PASSWORD"]
-encoded_password = quote_plus(raw_password)
-
-# 🧪 Log optionnel pour vérifier le mot de passe encodé
-print("Mot de passe brut :", repr(raw_password))
-print("Mot de passe encodé :", encoded_password)
 
 class Config:
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY", "dev_key")
@@ -25,8 +15,7 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
 
     if os.environ.get("FLASK_ENV") == "production":
-        raw_password = os.environ.get("DB_PASSWORD", "")
-        encoded_password = quote_plus(raw_password)
+        encoded_password = quote_plus(os.environ.get("DB_PASSWORD", ""))
         SQLALCHEMY_DATABASE_URI = (
             f"mysql+pymysql://{os.environ['DB_USER']}:{encoded_password}"
             f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
@@ -40,15 +29,3 @@ class Config:
         "pool_recycle": 280,
         "connect_args": {"connect_timeout": 10}
     }
-
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-    MAIL_TIMEOUT = 10  # en secondes
-
-# 🔍 Test local (non exécuté sur Render)
-if __name__ == "__main__":
-    print("🔗 URI SQLAlchemy :", Config.SQLALCHEMY_DATABASE_URI)
-    print("📧 Email :", Config.MAIL_USERNAME)
