@@ -171,7 +171,7 @@ def signup():
             flash("Email déjà utilisé.", "warning")
             return redirect(url_for("signup"))
 
-        nouvel_utilisateur = User(nom=nom, prenom=prenom, motdepasse=motdepasse)
+        nouvel_utilisateur = User(nom=nom, prenom=prenom, email=email, motdepasse=motdepasse)
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
