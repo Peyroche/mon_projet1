@@ -102,6 +102,8 @@
         total: total.toFixed(2)
       };
 
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
       fetch("/valider_commande", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

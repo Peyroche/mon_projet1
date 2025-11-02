@@ -7,6 +7,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="canonical" href="{{ request.url }}">
     <meta name="description" content="MD Consulting propose du savon noir 100% naturel, fabriqué en Côte d’Ivoire. Idéal pour les peaux noires et métissées, il nettoie, adoucit et lutte contre les tâches.">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="page">
@@ -46,7 +47,6 @@
 <footer>
     <p>© 2025 MD Consulting - Tous droits réservés</p>
     <p><a href="{{ url_for('mentions_legales') }}">Mentions légales</a></p>
-
 </footer>
 
 </body>

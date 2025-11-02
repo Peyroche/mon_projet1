@@ -64,7 +64,6 @@ with app.app_context():
 
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
-@csrf.exempt
 def valider_commande():
     if not request.is_json:
         return jsonify({"success": False, "error": "Requête non JSON"}), 400
