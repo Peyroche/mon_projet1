@@ -104,9 +104,9 @@
 
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
-      fetch("/valider_commande", {
+        fetch("/valider_commande", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json", "X-CSRFToken": csrfToken },
         body: JSON.stringify(clientData)
       })
       .then(response => response.json())
