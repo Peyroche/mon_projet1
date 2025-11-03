@@ -115,7 +115,8 @@ def reset_password_request():
         email = form.email.data
         user = User.query.filter_by(email=email).first()
         if user:
-            token = generate_password_hash(email + str(datetime.utcnow()))
+            s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+            token = s.dumps(email, salt="reset-password")
             reset_link = url_for("reset_password", token=token, _external=True)
             msg = Message("Réinitialisation du mot de passe",
                           sender=app.config.get("MAIL_USERNAME"),
@@ -132,7 +133,7 @@ def reset_password_request():
 def reset_password(token):
     s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
     try:
-        email = s.loads(token, salt="reset-password", max_age=1800)  # 30 minutes
+        email = s.loads(token, salt="reset-password", max_age=1800)
     except SignatureExpired:
         flash("Lien expiré.", "danger")
         return redirect(url_for("reset_password_request"))
