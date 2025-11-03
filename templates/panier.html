@@ -112,6 +112,8 @@
       })
       .then(response => response.json())
       .then(data => {
+        console.log("Réponse du serveur :", data); // ← pour voir la réponse dans la console
+
         if (data.success) {
           localStorage.removeItem("panier");
           panier = [];
