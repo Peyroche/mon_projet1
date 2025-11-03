@@ -237,6 +237,18 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
+@app.route("/reset_password")
+def reset_password():
+    return render_template("reset_password.html")
+
+@app.route("/reset_password")
+def reset_password():
+    return render_template("reset_password.html")
+
+@app.route("/reset_password_request)
+def reset_password_request():
+    return render_template("reset_password_request.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
