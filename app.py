@@ -17,18 +17,6 @@ db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 
 mail = Mail(app)
 
-msg = Message("Confirmation de commande",
-              sender=app.config["MAIL_USERNAME"],
-              recipients=["client@example.com"])
-msg.body = "Merci pour votre commande !"
-mail.send(msg)
-
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-
 # ✅ Test de connexion à la base
 try:
     with app.app_context():
@@ -111,6 +99,13 @@ def valider_commande():
     try:
         db.session.add(nouvelle_commande)
         db.session.commit()
+
+    msg = Message("Confirmation de commande",
+              sender=app.config["MAIL_USERNAME"],
+              recipients=["client@example.com"])
+msg.body = "Merci pour votre commande !"
+mail.send(msg)
+
     except Exception as e:
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500
