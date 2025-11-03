@@ -226,8 +226,8 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
-@app.route("/reset_password_request")
-def reset_password_request():
+@app.route("/reset_password_request_alt", methods=["GET", "POST"])
+def reset_password_request_alt():
     return render_template("reset_password_request.html", form=form)
 
 # 🚀 Démarrage Render
