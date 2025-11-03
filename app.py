@@ -3,6 +3,7 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_mail import Mail, Message
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
@@ -13,6 +14,20 @@ app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
+
+mail = Mail(app)
+
+msg = Message("Confirmation de commande",
+              sender=app.config["MAIL_USERNAME"],
+              recipients=["client@example.com"])
+msg.body = "Merci pour votre commande !"
+mail.send(msg)
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
 # ✅ Test de connexion à la base
 try:
