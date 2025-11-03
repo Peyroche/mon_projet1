@@ -3,7 +3,6 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_mail import Mail, Message
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
@@ -14,8 +13,6 @@ app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
-
-mail = Mail(app)
 
 # ✅ Test de connexion à la base
 try:
@@ -99,14 +96,6 @@ def valider_commande():
     try:
         db.session.add(nouvelle_commande)
         db.session.commit()
-
-        # 📧 Envoi de l'e-mail
-        msg = Message("Confirmation de commande",
-                  sender=app.config.get("MAIL_USERNAME"),
-                  recipients=[email])
-        msg.body = f"Bonjour {prenom},\n\nMerci pour votre commande chez MD Consulting !\n\nDétails :\n{items}\n\nTotal : {total:.2f}€\n\nÀ bientôt !"
-        mail.send(msg)
-
     except Exception as e:
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500

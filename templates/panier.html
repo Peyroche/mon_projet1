@@ -18,11 +18,10 @@
       <label>Email : <input type="email" name="email" required></label><br>
       <button type="submit">Valider la commande</button>
     </form>
-    
+
     <p id="confirmationMessage" style="display: none; font-weight: bold; color: green; margin-top: 10px;">
-  ✅ Votre commande a été validée avec succès !<br/>
-  📧 Un e-mail de confirmation vous a été envoyé à <span id="emailClient"></span>.
-</p>
+      ✅ Votre commande a été validée avec succès !
+    </p>
   </section>
 
   <style>
@@ -112,14 +111,11 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log("Réponse du serveur :", data); // ← pour voir la réponse dans la console
-
         if (data.success) {
           localStorage.removeItem("panier");
           panier = [];
           afficherPanier();
           document.getElementById("confirmationMessage").style.display = "block";
-          document.getElementById("emailClient").textContent = clientData.email;
         } else {
           alert("Erreur lors de la validation.");
         }
