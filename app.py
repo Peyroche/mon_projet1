@@ -100,12 +100,12 @@ def valider_commande():
         db.session.add(nouvelle_commande)
         db.session.commit()
 
-    # 📧 Envoi de l'e-mail
-    msg = Message("Confirmation de commande",
+        # 📧 Envoi de l'e-mail
+        msg = Message("Confirmation de commande",
                   sender=app.config.get("MAIL_USERNAME"),
                   recipients=[email])
-    msg.body = f"Bonjour {prenom},\n\nMerci pour votre commande chez MD Consulting !\n\nDétails :\n{items}\n\nTotal : {total:.2f}€\n\nÀ bientôt !"
-    mail.send(msg)
+        msg.body = f"Bonjour {prenom},\n\nMerci pour votre commande chez MD Consulting !\n\nDétails :\n{items}\n\nTotal : {total:.2f}€\n\nÀ bientôt !"
+        mail.send(msg)
 
     except Exception as e:
         print("Erreur base de données :", e)
