@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import ResetPasswordRequestForm
-from flask_mail import Mail, Message  # ← si ce n’est pas déjà fait
+from flask_mail import Mail, Message
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
@@ -225,6 +225,10 @@ def logout():
 @app.route("/mentions_legales")
 def mentions_legales():
     return render_template("mentions_legales.html")
+
+@app.route("/reset_password_request")
+def reset_password_request():
+    return render_template("reset_password_request.html", form=form)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
