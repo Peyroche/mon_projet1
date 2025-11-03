@@ -3,6 +3,8 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
+from forms import ResetPasswordRequestForm
+from flask_mail import Mail, Message  # ← si ce n’est pas déjà fait
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
@@ -105,12 +107,12 @@ def valider_commande():
 
 @app.route("/reset_password_request", methods=["GET", "POST"])
 def reset_password_request():
-    if request.method == "POST":
-        email = request.form["email"]
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        email = form.email.data
         user = User.query.filter_by(email=email).first()
         if user:
             token = generate_password_hash(email + str(datetime.utcnow()))
-            # Stocker le token temporairement (ex: dans la base ou en cache)
             reset_link = url_for("reset_password", token=token, _external=True)
             msg = Message("Réinitialisation du mot de passe",
                           sender=app.config.get("MAIL_USERNAME"),
@@ -121,7 +123,7 @@ def reset_password_request():
         else:
             flash("Adresse e-mail non reconnue.", "warning")
         return redirect(url_for("login"))
-    return render_template("reset_password_request.html")
+    return render_template("reset_password_request.html", form=form)
 
 @app.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token):
