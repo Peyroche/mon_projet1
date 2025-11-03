@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Email
+from wtforms import PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
-class ResetPasswordRequestForm(FlaskForm):
-    email = StringField("Adresse e-mail", validators=[DataRequired(), Email()])
-    submit = SubmitField("Envoyer le lien de réinitialisation")
+class ResetPasswordForm(FlaskForm):
+    motdepasse = PasswordField("Nouveau mot de passe", validators=[DataRequired()])
+    submit = SubmitField("Réinitialiser")
