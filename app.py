@@ -105,8 +105,8 @@ def valider_commande():
 
     return jsonify({"success": True})
 
-@app.route("/reset_password_request", methods=["GET", "POST"])
-def reset_password_request():
+@app.route("/reset_password_request_alt", methods=["GET", "POST"])
+def reset_password_request_alt():
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -225,10 +225,6 @@ def logout():
 @app.route("/mentions_legales")
 def mentions_legales():
     return render_template("mentions_legales.html")
-
-@app.route("/reset_password_request_alt", methods=["GET", "POST"])
-def reset_password_request_alt():
-    return render_template("reset_password_request.html", form=form)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
