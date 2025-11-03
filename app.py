@@ -96,11 +96,48 @@ def valider_commande():
     try:
         db.session.add(nouvelle_commande)
         db.session.commit()
+
     except Exception as e:
         print("Erreur base de données :", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
     return jsonify({"success": True})
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    if request.method == "POST":
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = generate_password_hash(email + str(datetime.utcnow()))
+            # Stocker le token temporairement (ex: dans la base ou en cache)
+            reset_link = url_for("reset_password", token=token, _external=True)
+            msg = Message("Réinitialisation du mot de passe",
+                          sender=app.config.get("MAIL_USERNAME"),
+                          recipients=[email])
+            msg.body = f"Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe :\n{reset_link}\n\nCe lien expirera dans 30 minutes."
+            mail.send(msg)
+            flash("Un lien de réinitialisation a été envoyé à votre adresse e-mail.", "info")
+        else:
+            flash("Adresse e-mail non reconnue.", "warning")
+        return redirect(url_for("login"))
+    return render_template("reset_password_request.html")
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    if request.method == "POST":
+        nouveau_mdp = generate_password_hash(request.form["motdepasse"])
+        # Retrouver l'utilisateur via le token (selon ta logique)
+        user = ...  # à implémenter selon ton système de token
+        if user:
+            user.motdepasse = nouveau_mdp
+            db.session.commit()
+            flash("Mot de passe mis à jour avec succès.", "success")
+            return redirect(url_for("login"))
+        else:
+            flash("Lien invalide ou expiré.", "danger")
+            return redirect(url_for("reset_password_request"))
+    return render_template("reset_password.html")
 
 # 🧭 Navigation
 @app.route('/')

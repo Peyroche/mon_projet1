@@ -15,6 +15,10 @@
 
         <button type="submit" class="btn btn-success w-100">Se connecter</button>
       </form>
+
+     <div class="text-center mt-3">
+     <a href="{{ url_for('reset_password_request') }}">Mot de passe oublié ?</a>
+     </div><br/>
    
      <div style="text-align: center;">
     <img src="{{ url_for('static', filename='images/Affiche.jpg') }}" height="300" width="300" alt="Affiche promotionnelle du savon noir naturel">
