@@ -3,9 +3,6 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import ResetPasswordRequestForm
-from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
@@ -13,8 +10,6 @@ import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
-mail = Mail(app)
 
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
@@ -107,50 +102,6 @@ def valider_commande():
         return jsonify({"success": False, "error": str(e)}), 500
 
     return jsonify({"success": True})
-
-@app.route("/reset_password_request", methods=["GET", "POST"])
-def reset_password_request():
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        user = User.query.filter_by(email=email).first()
-        if user:
-            s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-            token = s.dumps(email, salt="reset-password")
-            reset_link = url_for("reset_password", token=token, _external=True)
-            msg = Message("Réinitialisation du mot de passe",
-                          sender=app.config.get("MAIL_USERNAME"),
-                          recipients=[email])
-            msg.body = f"Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe :\n{reset_link}\n\nCe lien expirera dans 30 minutes."
-            mail.send(msg)
-            flash("Un lien de réinitialisation a été envoyé à votre adresse e-mail.", "info")
-        else:
-            flash("Adresse e-mail non reconnue.", "warning")
-        return redirect(url_for("login"))
-    return render_template("reset_password_request.html", form=form)
-
-@app.route("/reset_password/<token>", methods=["GET", "POST"])
-def reset_password(token):
-    s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-    try:
-        email = s.loads(token, salt="reset-password", max_age=1800)
-    except SignatureExpired:
-        flash("Lien expiré.", "danger")
-        return redirect(url_for("reset_password_request"))
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        flash("Utilisateur introuvable.", "danger")
-        return redirect(url_for("reset_password_request"))
-
-    if request.method == "POST":
-        nouveau_mdp = generate_password_hash(request.form["motdepasse"])
-        user.motdepasse = nouveau_mdp
-        db.session.commit()
-        flash("Mot de passe mis à jour avec succès.", "success")
-        return redirect(url_for("login"))
-
-    return render_template("reset_password.html")
 
 # 🧭 Navigation
 @app.route('/')
