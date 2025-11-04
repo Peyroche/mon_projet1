@@ -16,6 +16,7 @@ db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 
 # 🔐 Sécurité des cookies
 app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SECURE"] = True
 
 # 🧱 Modèles
 class Order(db.Model):
@@ -50,6 +51,16 @@ class MessageContact(db.Model):
     email = db.Column(db.String(100), nullable=False)
     contenu = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+class RegistreTraitement(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nom_traitement = db.Column(db.String(255), nullable=False)
+    finalite = db.Column(db.Text, nullable=False)
+    categorie_donnees = db.Column(db.Text, nullable=False)
+    personnes_concernees = db.Column(db.Text, nullable=False)
+    duree_conservation = db.Column(db.String(100), nullable=False)
+    mesures_securite = db.Column(db.Text, nullable=False)
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
@@ -174,7 +185,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))  # ou "accueil" si tu n’as pas encore de route login
+    return redirect(url_for("login"))
 
 @app.route("/mentions_legales")
 def mentions_legales():
