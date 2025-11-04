@@ -5,6 +5,8 @@ services:
     buildCommand: "pip install -r requirements.txt"
     startCommand: gunicorn --worker-class=gevent --timeout 60 app:app
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
       - key: FLASK_SECRET_KEY
         value: 1f33444e66c8a5e2f9c55b33c84b749c89d84c648ce0fec010e8f5e675a85b26
       - key: CSRF_SECRET_KEY
