@@ -53,6 +53,7 @@ class MessageContact(db.Model):
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class RegistreTraitement(db.Model):
+    __tablename__ = "central"  # 👈 indique à SQLAlchemy d’utiliser la table existante
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom_traitement = db.Column(db.String(255), nullable=False)
     finalite = db.Column(db.Text, nullable=False)
@@ -64,6 +65,20 @@ class RegistreTraitement(db.Model):
 
 with app.app_context():
     db.create_all()
+
+# 📌 Ajout d’un exemple dans le registre si vide
+with app.app_context():
+    if not RegistreTraitement.query.first():
+        exemple = RegistreTraitement(
+            nom_traitement="Gestion des commandes",
+            finalite="Suivi et livraison",
+            categorie_donnees="Nom, adresse, email",
+            personnes_concernees="Clients",
+            duree_conservation="5 ans",
+            mesures_securite="Accès restreint, mot de passe hashé"
+        )
+        db.session.add(exemple)
+        db.session.commit()
 
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
