@@ -15,8 +15,10 @@ colorama==0.4.6
 connexion==3.2.0
 cryptography==45.0.4
 Deprecated==1.2.18
+dnspython==2.8.0
 docutils==0.21.2
 ecdsa==0.19.1
+email-validator==2.3.0
 filetype==1.2.0
 Flask==3.1.1
 Flask-Bcrypt==1.0.1
@@ -41,6 +43,9 @@ jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 Kivy==2.3.1
 Kivy-Garden==0.1.5
+kivy_deps.angle==0.4.0
+kivy_deps.glew==0.3.1
+kivy_deps.sdl2==0.8.0
 limits==5.5.0
 Mako==1.3.10
 markdown-it-py==4.0.0
@@ -57,10 +62,12 @@ pygame==2.6.1
 Pygments==2.19.1
 PyJWT==2.10.1
 PyMySQL==1.1.1
+pypiwin32==223
 pytest==8.4.1
 python-dotenv==1.1.0
 python-http-client==3.3.7
 python-multipart==0.0.20
+pywin32==310
 PyYAML==6.0.2
 referencing==0.36.2
 reportlab==4.4.1
