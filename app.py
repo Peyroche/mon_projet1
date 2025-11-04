@@ -14,14 +14,6 @@ app.config.from_object(Config)
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 
-# ✅ Test de connexion à la base
-try:
-    with app.app_context():
-        db.session.execute(text("SELECT 1"))
-    print("✅ Connexion à la base MySQL réussie")
-except Exception as e:
-    print("❌ Erreur de connexion à la base :", e)
-
 # 🔐 Sécurité des cookies
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 
