@@ -54,7 +54,6 @@ pillow==11.2.1
 pluggy==1.6.0
 psutil==7.1.0
 pycparser==2.22
-pygame==2.6.1
 Pygments==2.19.1
 PyJWT==2.10.1
 PyMySQL==1.1.1
