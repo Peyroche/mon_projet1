@@ -63,6 +63,16 @@ class RegistreTraitement(db.Model):
     mesures_securite = db.Column(db.Text, nullable=False)
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Registre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    utilisateur_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    action = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    ip = db.Column(db.String(45))  # IPv4 ou IPv6
+    details = db.Column(db.Text)
+
+    utilisateur = db.relationship('User', backref=db.backref('registres', lazy=True))
+
 with app.app_context():
     db.create_all()
 
