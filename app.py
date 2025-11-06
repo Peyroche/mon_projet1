@@ -52,15 +52,26 @@ class MessageContact(db.Model):
     contenu = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-class Registre(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    utilisateur_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    action = db.Column(db.String(255), nullable=False)
-    date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    ip = db.Column(db.String(45))  # Pour IPv4 ou IPv6
-    details = db.Column(db.Text)   # Description ou métadonnées de l'action
+class RegistreTraitement(db.Model):
+    __tablename__ = "central"  # 👈 indique à SQLAlchemy d’utiliser la table existante
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nom_traitement = db.Column(db.String(255), nullable=False)
+    finalite = db.Column(db.Text, nullable=False)
+    categorie_donnees = db.Column(db.Text, nullable=False)
+    personnes_concernees = db.Column(db.Text, nullable=False)
+    duree_conservation = db.Column(db.String(100), nullable=False)
+    mesures_securite = db.Column(db.Text, nullable=False)
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
 
-    utilisateur = db.relationship('User', backref=db.backref('registres', lazy=True))
+with app.app_context():
+    db.create_all()
+
+# 📌 Ajout registre
+with app.app_context():
+    if not RegistreTraitement.query.first():
+        exemple = RegistreTraitement(...)
+        db.session.add(exemple)
+        db.session.commit()
 
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
@@ -84,27 +95,17 @@ def valider_commande():
     items = ", ".join([f"{item['produit']} ({item['prix']}€)" for item in panier])
 
     nouvelle_commande = Order(
-        name=f"{prenom} {nom}",
-        prenom=prenom,
-        address=adresse,
-        telephone=telephone,
-        email=email,
-        items=items,
-        total_price=total
+    name=f"{prenom} {nom}",
+    prenom=prenom,
+    address=adresse,
+    telephone=telephone,
+    email=email,
+    items=items,
+    total_price=total
     )
 
     try:
         db.session.add(nouvelle_commande)
-
-        # 🔐 Enregistrement dans le registre
-        nouvelle_entree_registre = Registre(
-            utilisateur_id=session.get("user_id"),
-            action="Commande validée",
-            ip=request.remote_addr,
-            details=f"Commande de {prenom} {nom} pour un total de {total}€"
-        )
-        db.session.add(nouvelle_entree_registre)
-
         db.session.commit()
 
     except Exception as e:
@@ -146,16 +147,6 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
-        # 📝 Enregistrement dans le registre
-        nouvelle_entree_registre = Registre(
-            utilisateur_id=session.get("user_id"),
-            action="Message de contact envoyé",
-            ip=request.remote_addr,
-            details=f"Message de {prenom} {nom} ({email}) : {message[:100]}..."
-        )
-        db.session.add(nouvelle_entree_registre)
-        db.session.commit()
-
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
@@ -177,16 +168,6 @@ def signup():
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
-        # 📝 Enregistrement dans le registre
-        nouvelle_entree_registre = Registre(
-            utilisateur_id=nouvel_utilisateur.id,
-            action="Création de compte",
-            ip=request.remote_addr,
-            details=f"Inscription de {prenom} {nom} avec l'email {email}"
-        )
-        db.session.add(nouvelle_entree_registre)
-        db.session.commit()
-
         session["user_id"] = nouvel_utilisateur.id
         return redirect(url_for("panier"))
 
@@ -202,17 +183,6 @@ def login():
 
         if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
             session["user_id"] = utilisateur.id
-
-            # 📝 Enregistrement dans le registre
-            nouvelle_entree_registre = Registre(
-                utilisateur_id=utilisateur.id,
-                action="Connexion réussie",
-                ip=request.remote_addr,
-                details=f"Connexion de l'utilisateur {utilisateur.prenom} {utilisateur.nom} ({email})"
-            )
-            db.session.add(nouvelle_entree_registre)
-            db.session.commit()
-
             return redirect(url_for("panier"))
         else:
             flash("Email ou mot de passe incorrect.", "danger")
