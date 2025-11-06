@@ -52,51 +52,15 @@ class MessageContact(db.Model):
     contenu = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-class RegistreTraitement(db.Model):
-    __tablename__ = "central"  # 👈 indique à SQLAlchemy d’utiliser la table existante
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nom_traitement = db.Column(db.String(255), nullable=False)
-    finalite = db.Column(db.Text, nullable=False)
-    categorie_donnees = db.Column(db.Text, nullable=False)
-    personnes_concernees = db.Column(db.Text, nullable=False)
-    duree_conservation = db.Column(db.String(100), nullable=False)
-    mesures_securite = db.Column(db.Text, nullable=False)
-    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+class Registre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    utilisateur_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    action = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    ip = db.Column(db.String(45))  # Pour IPv4 ou IPv6
+    details = db.Column(db.Text)   # Description ou métadonnées de l'action
 
-with app.app_context():
-    db.create_all()
-
-# 📌 Ajout d’un exemple dans le registre si vide
-with app.app_context():
-    if not RegistreTraitement.query.first():
-        exemple = RegistreTraitement(
-            nom_traitement="Gestion des commandes",
-            finalite="Suivi et livraison",
-            categorie_donnees="Nom, adresse, email",
-            personnes_concernees="Clients",
-            duree_conservation="5 ans",
-            mesures_securite="Accès restreint, mot de passe hashé"
-        )
-        db.session.add(exemple)
-        db.session.commit()
-
-@app.route("/ajouter_traitement", methods=["GET", "POST"])
-def ajouter_traitement():
-    if request.method == "POST":
-        traitement = RegistreTraitement(
-            nom_traitement=request.form["nom_traitement"],
-            finalite=request.form["finalite"],
-            categorie_donnees=request.form["categorie_donnees"],
-            personnes_concernees=request.form["personnes_concernees"],
-            duree_conservation=request.form["duree_conservation"],
-            mesures_securite=request.form["mesures_securite"]
-        )
-        db.session.add(traitement)
-        db.session.commit()
-        flash("Traitement ajouté au registre.", "success")
-        return redirect(url_for("afficher_registre"))
-
-    return render_template("ajouter_traitement.html")
+    utilisateur = db.relationship('User', backref=db.backref('registres', lazy=True))
 
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
@@ -120,17 +84,27 @@ def valider_commande():
     items = ", ".join([f"{item['produit']} ({item['prix']}€)" for item in panier])
 
     nouvelle_commande = Order(
-    name=f"{prenom} {nom}",
-    prenom=prenom,
-    address=adresse,
-    telephone=telephone,
-    email=email,
-    items=items,
-    total_price=total
+        name=f"{prenom} {nom}",
+        prenom=prenom,
+        address=adresse,
+        telephone=telephone,
+        email=email,
+        items=items,
+        total_price=total
     )
 
     try:
         db.session.add(nouvelle_commande)
+
+        # 🔐 Enregistrement dans le registre
+        nouvelle_entree_registre = Registre(
+            utilisateur_id=session.get("user_id"),
+            action="Commande validée",
+            ip=request.remote_addr,
+            details=f"Commande de {prenom} {nom} pour un total de {total}€"
+        )
+        db.session.add(nouvelle_entree_registre)
+
         db.session.commit()
 
     except Exception as e:
@@ -172,6 +146,16 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
+        # 📝 Enregistrement dans le registre
+        nouvelle_entree_registre = Registre(
+            utilisateur_id=session.get("user_id"),
+            action="Message de contact envoyé",
+            ip=request.remote_addr,
+            details=f"Message de {prenom} {nom} ({email}) : {message[:100]}..."
+        )
+        db.session.add(nouvelle_entree_registre)
+        db.session.commit()
+
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
@@ -193,6 +177,16 @@ def signup():
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
+        # 📝 Enregistrement dans le registre
+        nouvelle_entree_registre = Registre(
+            utilisateur_id=nouvel_utilisateur.id,
+            action="Création de compte",
+            ip=request.remote_addr,
+            details=f"Inscription de {prenom} {nom} avec l'email {email}"
+        )
+        db.session.add(nouvelle_entree_registre)
+        db.session.commit()
+
         session["user_id"] = nouvel_utilisateur.id
         return redirect(url_for("panier"))
 
@@ -208,6 +202,17 @@ def login():
 
         if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
             session["user_id"] = utilisateur.id
+
+            # 📝 Enregistrement dans le registre
+            nouvelle_entree_registre = Registre(
+                utilisateur_id=utilisateur.id,
+                action="Connexion réussie",
+                ip=request.remote_addr,
+                details=f"Connexion de l'utilisateur {utilisateur.prenom} {utilisateur.nom} ({email})"
+            )
+            db.session.add(nouvelle_entree_registre)
+            db.session.commit()
+
             return redirect(url_for("panier"))
         else:
             flash("Email ou mot de passe incorrect.", "danger")
@@ -227,11 +232,6 @@ def mentions_legales():
 @app.route("/politique du site")
 def politique_du_site():
     return render_template("politique_du_site.html")
-
-@app.route("/registre")
-def afficher_registre():
-    traitements = RegistreTraitement.query.order_by(RegistreTraitement.date_creation.desc()).all()
-    return render_template("registre.html", traitements=traitements)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
