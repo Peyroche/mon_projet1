@@ -181,10 +181,6 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
-@app.route("/politique du site")
-def politique_du_site():
-    return render_template("politique_du_site.html")
-
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
