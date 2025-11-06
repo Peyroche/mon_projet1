@@ -66,13 +66,6 @@ class RegistreTraitement(db.Model):
 with app.app_context():
     db.create_all()
 
-# 📌 Ajout registre
-with app.app_context():
-    if not RegistreTraitement.query.first():
-        exemple = RegistreTraitement(...)
-        db.session.add(exemple)
-        db.session.commit()
-
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
 def valider_commande():
