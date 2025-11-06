@@ -80,6 +80,24 @@ with app.app_context():
         db.session.add(exemple)
         db.session.commit()
 
+@app.route("/ajouter_traitement", methods=["GET", "POST"])
+def ajouter_traitement():
+    if request.method == "POST":
+        traitement = RegistreTraitement(
+            nom_traitement=request.form["nom_traitement"],
+            finalite=request.form["finalite"],
+            categorie_donnees=request.form["categorie_donnees"],
+            personnes_concernees=request.form["personnes_concernees"],
+            duree_conservation=request.form["duree_conservation"],
+            mesures_securite=request.form["mesures_securite"]
+        )
+        db.session.add(traitement)
+        db.session.commit()
+        flash("Traitement ajouté au registre.", "success")
+        return redirect(url_for("afficher_registre"))
+
+    return render_template("ajouter_traitement.html")
+
 # 📦 Commande
 @app.route("/valider_commande", methods=["POST"])
 def valider_commande():
@@ -209,6 +227,11 @@ def mentions_legales():
 @app.route("/politique du site")
 def politique_du_site():
     return render_template("politique_du_site.html")
+
+@app.route("/registre")
+def afficher_registre():
+    traitements = RegistreTraitement.query.order_by(RegistreTraitement.date_creation.desc()).all()
+    return render_template("registre.html", traitements=traitements)
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
