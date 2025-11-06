@@ -140,6 +140,16 @@ def contact():
         db.session.add(nouveau_message)
         db.session.commit()
 
+        # 📝 Enregistrement dans le registre
+        nouvelle_entree_registre = Registre(
+            utilisateur_id=session.get("user_id"),
+            action="Message de contact envoyé",
+            ip=request.remote_addr,
+            details=f"Message de {prenom} {nom} ({email}) : {message[:100]}..."
+        )
+        db.session.add(nouvelle_entree_registre)
+        db.session.commit()
+
         flash("Votre message a bien été envoyé !", "success")
         return redirect(url_for("contact"))
 
@@ -161,6 +171,16 @@ def signup():
         db.session.add(nouvel_utilisateur)
         db.session.commit()
 
+        # 📝 Enregistrement dans le registre
+        nouvelle_entree_registre = Registre(
+            utilisateur_id=nouvel_utilisateur.id,
+            action="Création de compte",
+            ip=request.remote_addr,
+            details=f"Inscription de {prenom} {nom} avec l'email {email}"
+        )
+        db.session.add(nouvelle_entree_registre)
+        db.session.commit()
+
         session["user_id"] = nouvel_utilisateur.id
         return redirect(url_for("panier"))
 
@@ -176,6 +196,17 @@ def login():
 
         if utilisateur and check_password_hash(utilisateur.motdepasse, motdepasse):
             session["user_id"] = utilisateur.id
+
+            # 📝 Enregistrement dans le registre
+            nouvelle_entree_registre = Registre(
+                utilisateur_id=utilisateur.id,
+                action="Connexion réussie",
+                ip=request.remote_addr,
+                details=f"Connexion de l'utilisateur {utilisateur.prenom} {utilisateur.nom} ({email})"
+            )
+            db.session.add(nouvelle_entree_registre)
+            db.session.commit()
+
             return redirect(url_for("panier"))
         else:
             flash("Email ou mot de passe incorrect.", "danger")
