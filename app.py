@@ -181,6 +181,10 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
+@app.route("/cgv")
+def cgv():
+    return render_template("cgv.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
