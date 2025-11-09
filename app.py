@@ -185,6 +185,10 @@ def mentions_legales():
 def cgv():
     return render_template("cgv.html")
 
+@app.route("/politique_de_confidentialité")
+def politique_de_confidentialité():
+    return render_template("politique_de_confidentialité.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
