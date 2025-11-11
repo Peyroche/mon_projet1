@@ -185,9 +185,9 @@ def mentions_legales():
 def cgv():
     return render_template("cgv.html")
 
-@app.route("/politique_de_confidentialité")
-def politique_de_confidentialité():
-    return render_template("politique_de_confidentialité.html")
+@app.route("/politique_de_confidentialite")
+def politique_de_confidentialite():
+    return render_template("politique_de_confidentialite.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
