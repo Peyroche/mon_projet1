@@ -195,6 +195,12 @@ footer {
   margin-top: auto;
 }
 
+.social a {
+    margin: 0 10px;
+    color: white;
+}
+
+
 /*MEDIA QUERIES pour les petits écrans (mobile)*/
 @media (max-width: 768px) {
   header, footer {
