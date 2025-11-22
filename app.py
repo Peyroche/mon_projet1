@@ -189,6 +189,10 @@ def cgv():
 def politique_de_confidentialite():
     return render_template("politique_de_confidentialite.html")
 
+@app.route("/a_propos")
+def a_propos():
+    return render_template("a_propos.html")
+
 # 🚀 Démarrage Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
