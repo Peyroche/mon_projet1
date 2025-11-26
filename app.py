@@ -181,9 +181,9 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
-@app.route("/conditions_generales_de_vente")
-def conditions_generale_de_vente():
-    return render_template("conditions_generales_de_vente.html")
+@app.route("/cgv")
+def cgv():
+    return render_template("cgv.html")
 
 @app.route("/politique_de_confidentialite")
 def politique_de_confidentialite():
