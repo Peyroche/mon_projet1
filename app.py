@@ -181,17 +181,17 @@ def logout():
 def mentions_legales():
     return render_template("mentions_legales.html")
 
-@app.route("/cgv")
-def cgv():
-    return render_template("cgv.html")
+@app.route("/conditions_generales_de_vente")
+def conditions_generale_de_vente():
+    return render_template("conditions_generales_de_vente.html")
 
 @app.route("/politique_de_confidentialite")
 def politique_de_confidentialite():
     return render_template("politique_de_confidentialite.html")
 
-@app.route("/a_propos")
-def a_propos():
-    return render_template("a_propos.html")
+@app.route("/qui_sommes_nous")
+def qui_sommes_nous():
+    return render_template("qui_sommes_nous.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
