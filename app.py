@@ -189,9 +189,9 @@ def cgv():
 def politique_de_confidentialite():
     return render_template("politique_de_confidentialite.html")
 
-@app.route("/qui_sommes_nous")
-def qui_sommes_nous():
-    return render_template("qui_sommes_nous.html")
+@app.route("/a_propos")
+def a_propos():
+    return render_template("a_propos.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
