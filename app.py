@@ -6,9 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from validator import validate_signup_data, validate_commande_data, validate_contact_data
 from datetime import datetime, timezone
-from itsdangerous import URLSafeTimedSerializer
-from flask_mail import Mail, Message
-import secrets
 import os
 
 app = Flask(__name__)
@@ -20,19 +17,6 @@ db = SQLAlchemy(app, engine_options=Config.SQLALCHEMY_ENGINE_OPTIONS)
 # 🔐 Sécurité des cookies
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SECURE"] = True
-
-# Configurer Flask-Mail
-app.config.update(
-    MAIL_SERVER="smtp.gmail.com",
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USERNAME="tonemail@gmail.com",
-    MAIL_PASSWORD="tonmotdepasse"
-)
-mail = Mail(app)
-
-# Générateur de jeton
-serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 # 🧱 Modèles
 class Order(db.Model):
@@ -208,42 +192,6 @@ def politique_de_confidentialite():
 @app.route("/a_propos")
 def a_propos():
     return render_template("a_propos.html")
-
-@app.route("/forgot_password", methods=["GET", "POST"])
-def forgot_password():
-    if request.method == "POST":
-        email = request.form["email"]
-        user = User.query.filter_by(email=email).first()
-        if user:
-            token = serializer.dumps(user.email, salt="reset-password")
-            reset_url = url_for("reset_password", token=token, _external=True)
-            msg = Message("Réinitialisation de mot de passe",
-                          sender="tonemail@gmail.com",
-                          recipients=[user.email])
-            msg.body = f"Pour réinitialiser votre mot de passe, cliquez ici : {reset_url}"
-            mail.send(msg)
-            flash("Un email de réinitialisation a été envoyé.", "info")
-        else:
-            flash("Email introuvable.", "danger")
-    return render_template("forgot_password.html")
-
-@app.route("/reset_password/<token>", methods=["GET", "POST"])
-def reset_password(token):
-    try:
-        email = serializer.loads(token, salt="reset-password", max_age=3600)  # 1h
-    except Exception:
-        flash("Lien invalide ou expiré.", "danger")
-        return redirect(url_for("forgot_password"))
-
-    user = User.query.filter_by(email=email).first()
-    if request.method == "POST":
-        new_password = generate_password_hash(request.form["motdepasse"])
-        user.motdepasse = new_password
-        db.session.commit()
-        flash("Mot de passe mis à jour avec succès.", "success")
-        return redirect(url_for("login"))
-
-    return render_template("reset_password.html")
 
 # 🚀 Démarrage Render
 if __name__ == "__main__":
