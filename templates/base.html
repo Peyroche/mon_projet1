@@ -23,11 +23,6 @@
 </script>
 
 <header>
-    <div class="header-container">
-        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo MD Consultig" class="logo" width="200" height="80">
-        <h1>MD Consulting Mico-Entreprise</h1>
-        <button class="burger" aria-label="Menu">&#9776;</button>
-    </div>
 
 <nav>
   {% if request.endpoint == 'panier' and session.get("user_id") %}
