@@ -286,40 +286,47 @@ footer {
   100% { transform: scale(1); }
 }
 
-/* MEDIA QUERIES pour les grands écrans (desktop) */
-@media (min-width: 1200px) {
-  .product {
-    max-width: 280px;
-  }
+/* Style du bouton burger */
+.burger {
+  display: none; /* caché par défaut */
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
 
-  .product img {
-    width: 120px;
-    height: 120px;
-  }
+/* Navigation par défaut (desktop) */
+nav {
+  display: flex;
+  gap: 20px;
+}
 
-  .product h2 {
-    font-size: 1.2rem;
-  }
-
-  .product p {
-    font-size: 1rem;
-  }
-
-  main {
-    gap: 40px;
-    padding: 30px;
-  }
-
-  p {
-    font-size: 1.3em;
-  }
-
-  .logo {
-    width: 70px;
+/* Mobile */
+@media (max-width: 768px) {
+  nav {
+    display: none; /* cache le menu */
+    flex-direction: column;
+    background-color: black;
+    position: absolute;
+    top: 80px; /* sous le header */
+    left: 0;
+    width: 100%;
+    z-index: 1000;
   }
 
   nav a {
-    font-size: 1.1rem;
+    padding: 12px;
+    border-top: 1px solid #333;
+    color: white;
+    text-align: center;
+  }
+
+  .burger {
+    display: block; /* affiche le bouton hamburger */
+  }
+
+  nav.active {
+    display: flex; /* affiche le menu quand actif */
   }
 }
-

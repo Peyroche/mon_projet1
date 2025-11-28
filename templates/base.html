@@ -17,6 +17,7 @@
     <div class="header-container">
         <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo MD Consultig" class="logo" width="200" height="80">
         <h1>MD Consulting Mico-Entreprise</h1>
+        <button class="burger" aria-label="Menu">&#9776;</button>
     </div>
 
 <nav>
@@ -72,6 +73,15 @@
   text-decoration: none;
 }
 </style>
+
+<script>
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav');
+
+  burger.addEventListener('click', () => {
+    nav.classList.toggle('active');
+  });
+</script>
 
 </footer>
 
